@@ -1,0 +1,22 @@
+ext {
+    android = [
+            compileSdkVersion: 29,
+            buildToolsVersion: "29.0.1",
+            applicationId    : "com.codesaid_im",
+            minSdkVersion    : 19,
+            targetSdkVersion : 29,
+            versionCode      : 1,
+            versionName      : "1.0",
+            multiDexEnabled  : true
+    ]
+
+    depsVersion = [
+            appcompat       : '1.1.0',
+            constraintlayout: '1.1.3'
+    ]
+
+    depsLibs = [
+            appcompat       : "androidx.appcompat:appcompat:${depsVersion.appcompat}",
+            constraintlayout: "androidx.constraintlayout:constraintlayout:${depsVersion.constraintlayout}"
+    ]
+}
