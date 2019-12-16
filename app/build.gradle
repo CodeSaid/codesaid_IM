@@ -13,6 +13,10 @@ android {
         multiDexEnabled this.rootProject.android.multiDexEnabled
     }
     buildTypes {
+        debug {
+            // 自定义Gradle常量
+            buildConfigField("boolean", "LOG_DEBUG", "true")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
