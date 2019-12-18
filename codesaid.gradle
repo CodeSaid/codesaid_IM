@@ -9,14 +9,24 @@ ext {
             versionName      : "1.0",
             multiDexEnabled  : true
     ]
-
     depsVersion = [
             appcompat       : '1.1.0',
-            constraintlayout: '1.1.3'
+            design          : '1.1.0',
+            constraintlayout: '1.1.3',
+            recyclerview    : '1.1.0',
+            glide           : '4.9.0',
+            glidecompiler   : '4.9.0',
+            okhttp          : '4.2.2'
     ]
+
 
     depsLibs = [
             appcompat       : "androidx.appcompat:appcompat:${depsVersion.appcompat}",
-            constraintlayout: "androidx.constraintlayout:constraintlayout:${depsVersion.constraintlayout}"
+            design          : "com.google.android.material:material:${depsVersion.design}",
+            constraintlayout: "androidx.constraintlayout:constraintlayout:${depsVersion.constraintlayout}",
+            recyclerview    : "androidx.recyclerview:recyclerview:${depsVersion.recyclerview}",
+            glide           : "com.github.bumptech.glide:glide:${depsVersion.glide}",
+            glidecompiler   : "com.github.bumptech.glide:compiler:${depsVersion.glidecompiler}",
+            okhttp          : "com.squareup.okhttp3:okhttp:${depsVersion.okhttp}"
     ]
 }
