@@ -13,6 +13,8 @@ android {
     if (rootProject.hasProperty("devBuild")) {
         splits.abi.enable = false
         splits.density.enable = false
+        // 禁用 PNG 压缩
+        aaptOptions.cruncherEnabled = false
     }
 
     compileSdkVersion this.rootProject.android.compileSdkVersion
