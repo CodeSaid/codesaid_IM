@@ -1,6 +1,20 @@
 apply plugin: 'com.android.application'
 
+/**
+ * Gradle : 构建的三个性能指标
+ * -全量编译： 全部编译 - Open Project
+ * -代码增量编译：修改了 Java / Kotlin 下面的代码的时候进行编译
+ * -资源增量编译： 修改了 res 下面的资源文件的时候编译
+ */
+
 android {
+
+    // Debug 模式
+    if (rootProject.hasProperty("devBuild")) {
+        splits.abi.enable = false
+        splits.density.enable = false
+    }
+
     compileSdkVersion this.rootProject.android.compileSdkVersion
     buildToolsVersion this.rootProject.android.buildToolsVersion
 
@@ -11,6 +25,9 @@ android {
         versionCode this.rootProject.android.versionCode
         versionName this.rootProject.android.versionName
         multiDexEnabled this.rootProject.android.multiDexEnabled
+
+        // Debug
+        resConfigs("zh","xxhdpi")
     }
     buildTypes {
         debug {
