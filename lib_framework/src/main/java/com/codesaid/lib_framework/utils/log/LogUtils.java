@@ -1,4 +1,4 @@
-package com.codesaid.lib_framework.utils;
+package com.codesaid.lib_framework.utils.log;
 
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
@@ -91,7 +91,7 @@ public class LogUtils {
         String fileName = "/sdcard/CodeSaid/IM.log";
 
         // log 格式 : 时间 + 内容
-        String log = mSimpleDateFormat.format(new Date()) + " " + text;
+        String log = mSimpleDateFormat.format(new Date()) + " " + text + "\n";
 
         // 检查父路径是否存在
         File groupFile = new File("/sdcard/CodeSaid/");
