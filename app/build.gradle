@@ -29,7 +29,7 @@ android {
         multiDexEnabled this.rootProject.android.multiDexEnabled
 
         // Debug
-        resConfigs("zh","xxhdpi")
+        resConfigs("zh", "xxhdpi")
     }
     buildTypes {
         debug {
@@ -52,4 +52,5 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation this.rootProject.depsLibs.appcompat
     implementation this.rootProject.depsLibs.constraintlayout
+    implementation project(path: ':lib_framework')
 }

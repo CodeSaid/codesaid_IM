@@ -2,12 +2,12 @@ package com.im;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.codesaid.lib_framework.base.BaseActivity;
 
 /**
  * @author codesaid
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
