@@ -1,6 +1,5 @@
 package com.codesaid.lib_framework.utils.log;
 
-import android.annotation.SuppressLint;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -87,42 +86,40 @@ public class LogUtils {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void writeLogToFile(String text) {
-        // 文件路径
-        String fileName = Environment.getDataDirectory().getPath() + "/CodeSaid/IM.log";
-
-        // log 格式 : 时间 + 内容
-        String log = mSimpleDateFormat.format(new Date()) + " " + text + "\n";
-
-        // 检查父路径是否存在
-        File groupFile = new File(Environment
-                .getDataDirectory().getPath() + "/CodeSaid/");
-        if (!groupFile.exists()) {
-            groupFile.mkdirs();
-        }
-        // 开始写入
+        //开始写入
         FileOutputStream fileOutputStream = null;
         BufferedWriter bufferedWriter = null;
         try {
-            fileOutputStream = new FileOutputStream(fileName, true);
-            // 编码问题 GBK 才能正确写入中文
-            bufferedWriter = new BufferedWriter(
-                    new OutputStreamWriter(fileOutputStream, Charset.forName("gbk")));
+            //文件路径
+            String fileRoot = Environment.getExternalStorageDirectory().getPath() + "/Meet/";
+            String fileName = "Meet.log";
+            // 时间 + 内容
+            String log = mSimpleDateFormat.format(new Date()) + " " + text + "\n";
+            //检查父路径
+            File fileGroup = new File(fileRoot);
+            //创建根布局
+            if (!fileGroup.exists()) {
+                fileGroup.mkdirs();
+            }
+            //创建文件
+            File fileChild = new File(fileRoot + fileName);
+            if (!fileChild.exists()) {
+                fileChild.createNewFile();
+            }
+            fileOutputStream = new FileOutputStream(fileRoot + fileName, true);
+            //编码问题 GBK 正确的存入中文
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream, Charset.forName("gbk")));
             bufferedWriter.write(log);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            e(e.toString());
         } catch (IOException e) {
             e.printStackTrace();
+            e(e.toString());
         } finally {
             if (bufferedWriter != null) {
                 try {
                     bufferedWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

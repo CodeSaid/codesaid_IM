@@ -24,7 +24,7 @@ public class MainActivity extends BaseActivity {
         mediaPlayerManager.setOnProgressListener(new MediaPlayerManager.OnProgressListener() {
             @Override
             public void onProgress(int position, int pos) {
-                LogUtils.d("progress: " + pos + "total: " + mediaPlayerManager.getDuration());
+                LogUtils.d("progress: " + pos + " total: " + mediaPlayerManager.getDuration());
             }
         });
     }
