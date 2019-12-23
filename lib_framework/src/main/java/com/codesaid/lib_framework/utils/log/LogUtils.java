@@ -1,6 +1,7 @@
 package com.codesaid.lib_framework.utils.log;
 
 import android.annotation.SuppressLint;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -85,16 +86,16 @@ public class LogUtils {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    @SuppressLint("SdCardPath")
     private static void writeLogToFile(String text) {
         // 文件路径
-        String fileName = "/sdcard/CodeSaid/IM.log";
+        String fileName = Environment.getDataDirectory().getPath() + "/CodeSaid/IM.log";
 
         // log 格式 : 时间 + 内容
         String log = mSimpleDateFormat.format(new Date()) + " " + text + "\n";
 
         // 检查父路径是否存在
-        File groupFile = new File("/sdcard/CodeSaid/");
+        File groupFile = new File(Environment
+                .getDataDirectory().getPath() + "/CodeSaid/");
         if (!groupFile.exists()) {
             groupFile.mkdirs();
         }
