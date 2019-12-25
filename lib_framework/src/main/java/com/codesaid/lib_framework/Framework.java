@@ -1,5 +1,10 @@
 package com.codesaid.lib_framework;
 
+import android.content.Context;
+
+import com.codesaid.lib_framework.utils.log.LogUtils;
+import com.codesaid.lib_framework.utils.sp.SpUtils;
+
 /**
  * Created By codesaid
  * On :2019-12-21
@@ -22,5 +27,10 @@ public class Framework {
             }
         }
         return mInstance;
+    }
+
+    public void initFramework(Context context) {
+        LogUtils.i("initFramework");
+        SpUtils.getInstance().initSp(context);
     }
 }
