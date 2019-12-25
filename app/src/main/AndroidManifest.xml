@@ -8,20 +8,36 @@
 
 
     <application
+        android:name=".base.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:theme="@style/AppThemeFull"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name="com.im.MainActivity">
+
+        <!--OPPO 等 适配 刘海屏-->
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.2" />
+
+        <!--小米适配水滴屏-->
+        <meta-data
+            android:name="notch.config"
+            android:value="portrait|landscape" />
+
+        <activity android:name=".ui.LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name="com.im.MainActivity" />
+        <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.GuideActivity" />
     </application>
 
 </manifest>
