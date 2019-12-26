@@ -23,12 +23,12 @@ public class MediaPlayerManager {
     // 播放
     public static final int MEDIA_STATUS_PLAY = 0;
     // 暂停
-    public static final int MEDIA_STATUS_PAUSE = 0;
+    public static final int MEDIA_STATUS_PAUSE = 1;
     // 停止
-    public static final int MEDIA_STATUS_STOP = 0;
+    public static final int MEDIA_STATUS_STOP = 2;
 
     // 当前播放状态
-    public static int MEDIA_STATUS_CUEERNT = MEDIA_STATUS_STOP;
+    public  int MEDIA_STATUS_CURRENT = MEDIA_STATUS_STOP;
 
     private OnProgressListener onProgressListener;
 
@@ -76,7 +76,7 @@ public class MediaPlayerManager {
             mMediaPlayer.setDataSource(path);
             mMediaPlayer.prepare();
             mMediaPlayer.start();
-            MEDIA_STATUS_CUEERNT = MEDIA_STATUS_PLAY;
+            MEDIA_STATUS_CURRENT = MEDIA_STATUS_PLAY;
             mHandler.sendEmptyMessage(H_PROGRESS);
         } catch (IOException e) {
             LogUtils.e(e.toString());
@@ -84,15 +84,17 @@ public class MediaPlayerManager {
         }
     }
 
-    public void startPlay(AssetFileDescriptor assetFileDescriptor) {
+    public void startPlay(AssetFileDescriptor path) {
         try {
             mMediaPlayer.reset();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                mMediaPlayer.setDataSource(assetFileDescriptor);
+                mMediaPlayer.setDataSource(path);
+            } else {
+                mMediaPlayer.setDataSource(path.getFileDescriptor(), path.getStartOffset(), path.getLength());
             }
             mMediaPlayer.prepare();
             mMediaPlayer.start();
-            MEDIA_STATUS_CUEERNT = MEDIA_STATUS_PLAY;
+            MEDIA_STATUS_CURRENT = MEDIA_STATUS_PLAY;
             mHandler.sendEmptyMessage(H_PROGRESS);
         } catch (IOException e) {
             LogUtils.e(e.toString());
@@ -105,7 +107,7 @@ public class MediaPlayerManager {
      */
     public void pausePlay() {
         if (isPlaying()) {
-            MEDIA_STATUS_CUEERNT = MEDIA_STATUS_PAUSE;
+            MEDIA_STATUS_CURRENT = MEDIA_STATUS_PAUSE;
             mMediaPlayer.pause();
             mHandler.removeMessages(H_PROGRESS);
         }
@@ -116,7 +118,7 @@ public class MediaPlayerManager {
      */
     public void continuePlay() {
         mMediaPlayer.start();
-        MEDIA_STATUS_CUEERNT = MEDIA_STATUS_PLAY;
+        MEDIA_STATUS_CURRENT = MEDIA_STATUS_PLAY;
         mHandler.sendEmptyMessage(H_PROGRESS);
     }
 
@@ -125,7 +127,7 @@ public class MediaPlayerManager {
      */
     public void stopPlay() {
         mMediaPlayer.stop();
-        MEDIA_STATUS_CUEERNT = MEDIA_STATUS_STOP;
+        MEDIA_STATUS_CURRENT = MEDIA_STATUS_STOP;
         mHandler.removeMessages(H_PROGRESS);
     }
 

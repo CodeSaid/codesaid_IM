@@ -1,8 +1,13 @@
 package com.im.ui;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +16,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.codesaid.lib_framework.base.BasePagerAdapter;
 import com.codesaid.lib_framework.base.BaseUIActivity;
+import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
+import com.codesaid.lib_framework.utils.anim.AnimUtils;
 import com.im.R;
 
 import java.util.ArrayList;
@@ -22,7 +29,7 @@ import java.util.List;
  * Package Name: com.im.ui
  * desc : 引导页面
  */
-public class GuideActivity extends BaseUIActivity {
+public class GuideActivity extends BaseUIActivity implements View.OnClickListener {
 
     private ImageView iv_music_switch;
     private TextView tv_guide_skip;
@@ -50,6 +57,9 @@ public class GuideActivity extends BaseUIActivity {
     private ImageView iv_guide_night;
     private ImageView iv_guide_smile;
 
+    private MediaPlayerManager mPlayerManager;
+    private ObjectAnimator mAnimator;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +76,9 @@ public class GuideActivity extends BaseUIActivity {
         iv_guide_point_2 = findViewById(R.id.iv_guide_point_2);
         iv_guide_point_3 = findViewById(R.id.iv_guide_point_3);
         mViewPager = findViewById(R.id.mViewPager);
+
+        iv_music_switch.setOnClickListener(this);
+        tv_guide_skip.setOnClickListener(this);
 
         viewOne = View.inflate(this, R.layout.layout_pager_guide_1, null);
         viewTwo = View.inflate(this, R.layout.layout_pager_guide_2, null);
@@ -115,6 +128,23 @@ public class GuideActivity extends BaseUIActivity {
 
             }
         });
+
+        // 播放歌曲
+        playMusic();
+    }
+
+    /**
+     * 部分歌曲
+     */
+    private void playMusic() {
+        mPlayerManager = new MediaPlayerManager();
+        mPlayerManager.setLooping(true);
+        AssetFileDescriptor path = getResources().openRawResourceFd(R.raw.guide);
+        mPlayerManager.startPlay(path);
+
+        // 设置旋转动画
+        mAnimator = AnimUtils.rotation(iv_music_switch);
+        mAnimator.start();
     }
 
     /**
@@ -138,6 +168,30 @@ public class GuideActivity extends BaseUIActivity {
                 iv_guide_point_1.setImageResource(R.drawable.img_guide_point);
                 iv_guide_point_2.setImageResource(R.drawable.img_guide_point);
                 iv_guide_point_3.setImageResource(R.drawable.img_guide_point_p);
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.iv_music_switch:
+                if (mPlayerManager.MEDIA_STATUS_CURRENT == MediaPlayerManager.MEDIA_STATUS_PAUSE) {
+                    // 当前是暂停状态
+                    mAnimator.start();
+                    mPlayerManager.continuePlay();
+                    iv_music_switch.setImageResource(R.drawable.img_guide_music);
+                } else if (mPlayerManager.MEDIA_STATUS_CURRENT == MediaPlayerManager.MEDIA_STATUS_PLAY) {
+                    // 当前是播放状态
+                    mAnimator.pause();
+                    mPlayerManager.pausePlay();
+                    iv_music_switch.setImageResource(R.drawable.img_guide_music_off);
+                }
+                break;
+            case R.id.tv_guide_skip:
+                // 跳转到 LoginActivity
+                startActivity(new Intent(GuideActivity.this, LoginActivity.class));
+                finish();
                 break;
         }
     }
