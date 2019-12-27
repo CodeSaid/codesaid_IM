@@ -3,14 +3,14 @@ package com.im;
 import android.content.res.AssetFileDescriptor;
 import android.os.Bundle;
 
-import com.codesaid.lib_framework.base.BaseActivity;
+import com.codesaid.lib_framework.base.BaseUIActivity;
 import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 
 /**
  * @author codesaid
  */
-public class MainActivity extends BaseActivity {
+public class MainUIActivity extends BaseUIActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

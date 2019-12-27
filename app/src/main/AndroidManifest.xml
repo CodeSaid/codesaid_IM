@@ -27,7 +27,7 @@
             android:name="notch.config"
             android:value="portrait|landscape" />
 
-        <activity android:name=".ui.LauncherActivity">
+        <activity android:name=".ui.GuideActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,9 +35,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.im.MainActivity" />
+        <activity android:name="com.im.MainUIActivity" />
         <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.GuideActivity" />
+        <!--        <activity android:name=".ui.GuideActivity" />-->
+        <activity android:name=".ui.LauncherActivity" />
     </application>
 
 </manifest>
