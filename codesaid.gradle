@@ -2,7 +2,7 @@ ext {
     android = [
             compileSdkVersion: 29,
             buildToolsVersion: "29.0.1",
-            applicationId    : "com.codesaid_im",
+            applicationId    : "com.im",
             minSdkVersion    : 19,
             targetSdkVersion : 29,
             versionCode      : 1,
@@ -16,7 +16,12 @@ ext {
             recyclerview    : '1.1.0',
             glide           : '4.9.0',
             glidecompiler   : '4.9.0',
-            okhttp          : '4.2.2'
+            okhttp          : '4.2.2',
+            bmob            : '3.7.4',
+            rxjava          : '2.2.2',
+            rxandroid       : '2.1.0',
+            okio            : '2.1.0',
+            gson            : '2.8.5',
     ]
 
 
@@ -27,6 +32,12 @@ ext {
             recyclerview    : "androidx.recyclerview:recyclerview:${depsVersion.recyclerview}",
             glide           : "com.github.bumptech.glide:glide:${depsVersion.glide}",
             glidecompiler   : "com.github.bumptech.glide:compiler:${depsVersion.glidecompiler}",
-            okhttp          : "com.squareup.okhttp3:okhttp:${depsVersion.okhttp}"
+            okhttp          : "com.squareup.okhttp3:okhttp:${depsVersion.okhttp}",
+            httpclient      : "org.apache.http.legacy",
+            bmob            : "cn.bmob.android:bmob-sdk:${depsVersion.bmob}",
+            rxjava          : "io.reactivex.rxjava2:rxjava:${depsVersion.rxjava}",
+            rxandroid       : "io.reactivex.rxjava2:rxandroid:${depsVersion.rxandroid}",
+            okio            : "com.squareup.okio:okio:${depsVersion.okio}",
+            gson            : "com.google.code.gson:gson:${depsVersion.gson}"
     ]
 }

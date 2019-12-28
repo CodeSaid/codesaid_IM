@@ -3,6 +3,9 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion this.rootProject.android.compileSdkVersion
 
+    // httpclient
+    useLibrary this.rootProject.depsLibs.httpclient
+
     defaultConfig {
         minSdkVersion this.rootProject.android.minSdkVersion
         targetSdkVersion this.rootProject.android.targetSdkVersion
@@ -11,7 +14,7 @@ android {
         multiDexEnabled this.rootProject.android.multiDexEnabled
 
         // Debug
-        resConfigs("zh","xxhdpi")
+        resConfigs("zh", "xxhdpi")
     }
 
     buildTypes {
@@ -36,4 +39,17 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation this.rootProject.depsLibs.appcompat
+
+    // Bmob
+    api this.rootProject.depsLibs.bmob
+    // rxjava
+    api this.rootProject.depsLibs.rxjava
+    // rxandroid
+    api this.rootProject.depsLibs.rxandroid
+    // okio
+    api this.rootProject.depsLibs.okio
+    // gson
+    api this.rootProject.depsLibs.gson
+    // okhttp
+    api this.rootProject.depsLibs.okhttp
 }

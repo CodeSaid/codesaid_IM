@@ -16,7 +16,6 @@ android {
         // 禁用 PNG 压缩
         aaptOptions.cruncherEnabled = false
     }
-
     compileSdkVersion this.rootProject.android.compileSdkVersion
     buildToolsVersion this.rootProject.android.buildToolsVersion
 
@@ -52,5 +51,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation this.rootProject.depsLibs.appcompat
     implementation this.rootProject.depsLibs.constraintlayout
+
     implementation project(path: ':lib_framework')
 }

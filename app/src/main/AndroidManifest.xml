@@ -17,6 +17,13 @@
         android:theme="@style/AppThemeFull"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <!-- Bmob  -->
+        <provider
+            android:name="cn.bmob.v3.util.BmobContentProvider"
+            android:authorities="com.im.BmobContentProvider">
+
+        </provider>
+
         <!--OPPO 等 适配 刘海屏-->
         <meta-data
             android:name="android.max_aspect"

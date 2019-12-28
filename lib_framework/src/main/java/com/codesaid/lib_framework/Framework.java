@@ -2,6 +2,7 @@ package com.codesaid.lib_framework;
 
 import android.content.Context;
 
+import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 
@@ -32,5 +33,6 @@ public class Framework {
     public void initFramework(Context context) {
         LogUtils.i("initFramework");
         SpUtils.getInstance().initSp(context);
+        BmobManager.getInstance().init(context);
     }
 }
