@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.codesaid.lib_framework.base.BaseUIActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
-import com.codesaid.lib_framework.utils.ToastUtils;
+import com.codesaid.lib_framework.utils.toast.ToastUtils;
 
 /**
  * @author codesaid
