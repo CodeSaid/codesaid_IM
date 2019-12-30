@@ -8,7 +8,6 @@ apply plugin: 'com.android.application'
  */
 
 android {
-
     // Debug 模式
     if (rootProject.hasProperty("devBuild")) {
         splits.abi.enable = false
