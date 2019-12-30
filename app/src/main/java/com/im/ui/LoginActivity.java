@@ -17,17 +17,19 @@ import androidx.annotation.Nullable;
 import com.codesaid.lib_framework.base.BaseUIActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
-import com.codesaid.lib_framework.bmob.TestData;
 import com.codesaid.lib_framework.entity.Constants;
-import com.codesaid.lib_framework.utils.ToastUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
+import com.codesaid.lib_framework.utils.toast.ToastUtils;
+import com.codesaid.lib_framework.view.DialogManager;
+import com.codesaid.lib_framework.view.DialogView;
+import com.codesaid.lib_framework.view.LoadingView;
+import com.codesaid.lib_framework.view.TouchPictureView;
 import com.im.MainActivity;
 import com.im.R;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
-import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Created By codesaid
@@ -75,6 +77,10 @@ public class LoginActivity extends BaseUIActivity implements View.OnClickListene
             return false;
         }
     });
+    private DialogView mDialogView;
+    private TouchPictureView mPictureView;
+
+    private LoadingView mLoadingView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,6 +91,9 @@ public class LoginActivity extends BaseUIActivity implements View.OnClickListene
     }
 
     private void initView() {
+
+        initDialogView();
+
         et_phone = findViewById(R.id.et_phone);
         et_code = findViewById(R.id.et_code);
         btn_send_code = findViewById(R.id.btn_send_code);
@@ -101,11 +110,31 @@ public class LoginActivity extends BaseUIActivity implements View.OnClickListene
         }
     }
 
+    private void initDialogView() {
+        mLoadingView = new LoadingView(this);
+
+        mDialogView = DialogManager
+                .getInstance()
+                .initView(this, R.layout.dialog_code_view);
+
+        mPictureView = mDialogView.findViewById(R.id.picture_view);
+
+        mPictureView.setOnViewResultListener(new TouchPictureView.onViewResultListener() {
+            @Override
+            public void onResult() {
+                DialogManager.getInstance().hide(mDialogView);
+                sendSMS();
+            }
+        });
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_send_code:
-                sendSMS();
+                DialogManager
+                        .getInstance()
+                        .show(mDialogView);
                 break;
             case R.id.btn_login:
                 login();
@@ -128,18 +157,27 @@ public class LoginActivity extends BaseUIActivity implements View.OnClickListene
             return;
         }
 
+        // 显示Loading view
+        mLoadingView.show("正在登录...");
+
         BmobManager.getInstance().signOrLoginByMobilePhone(phone, code, new LogInListener<IMUser>() {
             @Override
             public void done(IMUser imUser, BmobException e) {
                 if (e == null) {
                     // 登录成功
+                    mLoadingView.hide();
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     // 把手机号码保存起来
                     SpUtils.getInstance().putString(Constants.SP_PHONE, phone);
                     finish();
                 } else {
                     // 登录失败
-                    ToastUtils.show(LoginActivity.this, "ERROR: " + e.getMessage());
+                    mLoadingView.hide();
+                    if (e.getErrorCode() == 207) {
+                        ToastUtils.show(LoginActivity.this, getString(R.string.text_login_code_error));
+                    } else {
+                        ToastUtils.show(LoginActivity.this, "ERROR: " + e.getMessage());
+                    }
                 }
             }
         });
