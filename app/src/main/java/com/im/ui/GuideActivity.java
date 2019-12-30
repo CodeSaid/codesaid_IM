@@ -1,13 +1,16 @@
 package com.im.ui;
 
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Point;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -60,6 +63,9 @@ public class GuideActivity extends BaseUIActivity implements View.OnClickListene
     private MediaPlayerManager mPlayerManager;
     private ObjectAnimator mAnimator;
 
+    // ViewPager 当前页面的 position
+    private int currentPage;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +96,7 @@ public class GuideActivity extends BaseUIActivity implements View.OnClickListene
         iv_guide_smile = viewThree.findViewById(R.id.iv_guide_smile);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initData() {
         mViewList.add(viewOne);
         mViewList.add(viewTwo);
@@ -120,12 +127,49 @@ public class GuideActivity extends BaseUIActivity implements View.OnClickListene
 
             @Override
             public void onPageSelected(int position) {
+                currentPage = position;
                 selectPoint(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
+            }
+        });
+
+        //设置ViewPager的滑动监听,为了滑动到最后一页,继续滑动实现页面的跳转
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+            float startX;
+
+            float endX;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // 获取按下的位置
+                        startX = motionEvent.getX();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // 获取抬起的位置
+                        endX = motionEvent.getX();
+
+                        WindowManager windowManager = (WindowManager) getApplicationContext()
+                                .getSystemService(Context.WINDOW_SERVICE);
+                        //获取屏幕的宽度
+                        Point size = new Point();
+                        windowManager.getDefaultDisplay().getSize(size);
+                        int width = size.x;
+
+                        // 首先要确定的是，是否到了最后一页
+                        // 然后判断是否向左滑动，并且滑动距离是否符合
+                        if ((mViewList.size() - 1 == currentPage) && (startX - endX > (width / 5))) {
+                            startActivity(new Intent(GuideActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                        break;
+                }
+                return false;
             }
         });
 

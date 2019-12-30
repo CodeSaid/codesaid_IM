@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 import com.codesaid.lib_framework.base.BaseActivity;
 import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
-import com.im.MainUIActivity;
+import com.im.MainActivity;
 import com.im.R;
 
 /**
@@ -72,7 +72,7 @@ public class LauncherActivity extends BaseActivity {
                 intent.setClass(this, LoginActivity.class);
             } else {
                 // 登录过 ----> 跳转到主页
-                intent.setClass(this, MainUIActivity.class);
+                intent.setClass(this, MainActivity.class);
             }
         }
 
