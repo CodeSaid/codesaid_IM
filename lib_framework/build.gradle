@@ -52,4 +52,7 @@ dependencies {
     api this.rootProject.depsLibs.gson
     // okhttp
     api this.rootProject.depsLibs.okhttp
+
+    // toast
+    implementation this.rootProject.depsLibs.toast
 }
