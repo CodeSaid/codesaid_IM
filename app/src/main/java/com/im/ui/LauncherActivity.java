@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.codesaid.lib_framework.base.BaseActivity;
+import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.im.MainActivity;
@@ -68,8 +69,15 @@ public class LauncherActivity extends BaseActivity {
             // 判断是否登录过
             String token = SpUtils.getInstance().getString(Constants.SP_TOKEN, "");
             if (TextUtils.isEmpty(token)) {
-                // 未登录过 ----> 跳转到登录页面
-                intent.setClass(this, LoginActivity.class);
+                // 判断 Bmob 是否登录过
+                if (BmobManager.getInstance().isLogin()) {
+                    // 登录过 ----> 跳转到主页
+                    intent.setClass(this, MainActivity.class);
+                } else {
+                    // 未登录过 ----> 跳转到登录页面
+                    intent.setClass(this, LoginActivity.class);
+                }
+
             } else {
                 // 登录过 ----> 跳转到主页
                 intent.setClass(this, MainActivity.class);
