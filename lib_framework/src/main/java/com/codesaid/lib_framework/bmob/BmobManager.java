@@ -71,4 +71,11 @@ public class BmobManager {
     public void signOrLoginByMobilePhone(String phone, String code, LogInListener<IMUser> listener) {
         BmobUser.signOrLoginByMobilePhone(phone, code, listener);
     }
+
+    /**
+     * 判断是否登录过
+     */
+    public boolean isLogin() {
+        return BmobUser.isLogin();
+    }
 }
