@@ -153,14 +153,21 @@ public class TouchPictureView extends View {
                 // 防止越界
                 if (event.getX() > 0 && event.getX() < (mWidth - CARD_SIZE)) {
                     moveX = (int) event.getX();
-
-                    // 验证
-                    if (moveX > (LINE_W - errorValues) && moveX < (LINE_W + errorValues)) {
-                        if (mOnViewResultListener != null) {
-                            mOnViewResultListener.onResult();
-                        }
+                    invalidate();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                // 验证
+                if (moveX > (LINE_W - errorValues) && moveX < (LINE_W + errorValues)) {
+                    if (mOnViewResultListener != null) {
+                        mOnViewResultListener.onResult();
+                        // 重置
+                        moveX = 200;
+                        invalidate();
                     }
-
+                } else {
+                    // 重置
+                    moveX = 200;
                     invalidate();
                 }
                 break;
