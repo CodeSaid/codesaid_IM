@@ -53,6 +53,8 @@ dependencies {
     // okhttp
     api this.rootProject.depsLibs.okhttp
 
+    api this.rootProject.depsLibs.tagcloud
+
     // toast
     implementation this.rootProject.depsLibs.toast
 }
