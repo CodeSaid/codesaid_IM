@@ -9,8 +9,6 @@ import android.os.Message;
 
 import androidx.annotation.NonNull;
 
-import com.codesaid.lib_framework.utils.log.LogUtils;
-
 import java.io.IOException;
 
 /**
@@ -79,7 +77,6 @@ public class MediaPlayerManager {
             MEDIA_STATUS_CURRENT = MEDIA_STATUS_PLAY;
             mHandler.sendEmptyMessage(H_PROGRESS);
         } catch (IOException e) {
-            LogUtils.e(e.toString());
             e.printStackTrace();
         }
     }
@@ -97,7 +94,6 @@ public class MediaPlayerManager {
             MEDIA_STATUS_CURRENT = MEDIA_STATUS_PLAY;
             mHandler.sendEmptyMessage(H_PROGRESS);
         } catch (IOException e) {
-            LogUtils.e(e.toString());
             e.printStackTrace();
         }
     }
