@@ -53,7 +53,10 @@ dependencies {
     // okhttp
     api this.rootProject.depsLibs.okhttp
 
+    // 3D 效果
     api this.rootProject.depsLibs.tagcloud
+    // circleimageview
+    api this.rootProject.depsLibs.circleimageview
 
     // toast
     implementation this.rootProject.depsLibs.toast
