@@ -57,9 +57,36 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.im.MainActivity" />
-        <activity android:name=".ui.LoginActivity" />
-        <activity android:name=".ui.GuideActivity" />
+        <activity
+            android:name="com.im.MainActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ui.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ui.GuideActivity"
+            android:theme="@style/AppThemeFull" />
+        <activity
+            android:name=".ui.FirstUploadActivity"
+            android:label="@string/text_upload_title"
+            android:launchMode="singleTask" />
+
+        <service android:name=".service.CloudService" />
+
+        <!--   FileProvider     -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.im.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
     </application>
 
 </manifest>
