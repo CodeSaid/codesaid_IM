@@ -2,11 +2,17 @@ package com.codesaid.lib_framework.bmob;
 
 import android.content.Context;
 
+import java.io.File;
+
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
+import cn.bmob.v3.datatype.BmobFile;
+import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.UpdateListener;
+import cn.bmob.v3.listener.UploadFileListener;
 
 /**
  * Created By codesaid
@@ -77,5 +83,56 @@ public class BmobManager {
      */
     public boolean isLogin() {
         return BmobUser.isLogin();
+    }
+
+    /**
+     * 上传头像
+     *
+     * @param name     名称
+     * @param file     头像
+     * @param listener listener
+     */
+    public void uploadFirstPhoto(final String name, File file, final onUploadPhotoListener listener) {
+        /**
+         * 上传文件   拿到地址
+         * 更新用户 信息
+         */
+
+        final IMUser user = getUser();
+        final BmobFile bmobFile = new BmobFile(file);
+        bmobFile.uploadblock(new UploadFileListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    // 上传成功
+                    user.setNickName(name);
+                    user.setPhoto(bmobFile.getFileUrl());
+
+                    user.setTokenNickName(name);
+                    user.setTokenPhoto(bmobFile.getFileUrl());
+
+                    // 更新用户信息
+                    user.update(new UpdateListener() {
+                        @Override
+                        public void done(BmobException e) {
+                            if (e == null) {
+                                listener.onUploadSuccess();
+                            } else {
+                                listener.onUploadFail(e);
+                            }
+                        }
+                    });
+                } else {
+                    listener.onUploadFail(e);
+                }
+            }
+        });
+    }
+
+    public interface onUploadPhotoListener {
+
+        void onUploadSuccess();
+
+        void onUploadFail(BmobException e);
     }
 }
