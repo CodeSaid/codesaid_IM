@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -363,5 +364,18 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
                 break;
 
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == UPLOAD_CODE) {
+                // 上传头像成功
+                checkToken();
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
