@@ -58,6 +58,8 @@ dependencies {
     // circleimageview
     api this.rootProject.depsLibs.circleimageview
 
+    api this.rootProject.depsLibs.glide
+
     // toast
     implementation this.rootProject.depsLibs.toast
 }
