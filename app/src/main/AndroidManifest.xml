@@ -73,6 +73,8 @@
             android:name=".ui.FirstUploadActivity"
             android:label="@string/text_upload_title"
             android:launchMode="singleTask" />
+        <activity android:name=".ui.AddFriendActivity" />
+        <activity android:name=".ui.ContactFriendActivity" />
 
         <service android:name=".service.CloudService" />
 
