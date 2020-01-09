@@ -82,6 +82,8 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
         requestPermission();
 
         initView();
+
+        //SimulationData.testData();
     }
 
     /**
