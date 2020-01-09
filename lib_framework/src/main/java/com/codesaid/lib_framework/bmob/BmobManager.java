@@ -5,10 +5,12 @@ import android.content.Context;
 import java.io.File;
 
 import cn.bmob.v3.Bmob;
+import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
 import cn.bmob.v3.listener.UpdateListener;
@@ -127,6 +129,39 @@ public class BmobManager {
                 }
             }
         });
+    }
+
+    /**
+     * 查询基类
+     *
+     * @param key
+     * @param values
+     * @param listener
+     */
+    public void baseQuery(String key, String values, FindListener<IMUser> listener) {
+        BmobQuery<IMUser> query = new BmobQuery<>();
+        query.addWhereEqualTo(key, values);
+        query.findObjects(listener);
+    }
+
+    /**
+     * 根据电话号码查询用户
+     *
+     * @param phone    电话号码
+     * @param listener listener
+     */
+    public void queryPhoneUser(String phone, FindListener<IMUser> listener) {
+        baseQuery("mobilePhoneNumber", phone, listener);
+    }
+
+    /**
+     * 查询所有好友
+     *
+     * @param listener listener
+     */
+    public void queryAllUser(FindListener<IMUser> listener) {
+        BmobQuery<IMUser> query = new BmobQuery<>();
+        query.findObjects(listener);
     }
 
     public interface onUploadPhotoListener {
