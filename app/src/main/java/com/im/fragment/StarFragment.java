@@ -1,5 +1,6 @@
 package com.im.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.codesaid.lib_framework.adapter.CloudTagAdapter;
 import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.utils.toast.ToastUtils;
 import com.im.R;
+import com.im.ui.AddFriendActivity;
 import com.moxun.tagcloudlib.view.TagCloudView;
 
 import java.util.ArrayList;
@@ -88,6 +90,11 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
+        switch (view.getId()) {
+            case R.id.iv_add:
+                // 添加好友
+                startActivity(new Intent(getActivity(), AddFriendActivity.class));
+                break;
+        }
     }
 }
