@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codesaid.lib_framework.base.BaseUIActivity;
+import com.codesaid.lib_framework.base.BaseBackActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
+import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.im.R;
 import com.im.adapter.AddFriendAdapter;
 import com.im.model.AddFriendModel;
@@ -31,7 +32,7 @@ import cn.bmob.v3.listener.FindListener;
  * Package Name: com.im.ui
  * desc : 从通讯录导入好友
  */
-public class ContactFriendActivity extends BaseUIActivity {
+public class ContactFriendActivity extends BaseBackActivity {
 
     private RecyclerView mContactView;
     private Map<String, String> mContactMap = new HashMap<>();
@@ -103,6 +104,10 @@ public class ContactFriendActivity extends BaseUIActivity {
             while (cursor.moveToNext()) {
                 name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                LogUtils.i("name:" + name + " phone:" + phone);
+
+                phone = phone.replace(" ", "").replace("-", "");
 
                 mContactMap.put(name, phone);
             }

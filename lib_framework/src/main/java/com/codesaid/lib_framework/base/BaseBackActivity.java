@@ -19,7 +19,7 @@ public class BaseBackActivity extends BaseActivity {
 
         //显示返回键
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             //清除阴影
             getSupportActionBar().setElevation(0);
         }

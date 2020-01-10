@@ -73,7 +73,7 @@ public class DialogManager {
     public void hide(DialogView view) {
         if (view != null) {
             if (view.isShowing()) {
-                view.hide();
+                view.dismiss();
             }
         }
     }

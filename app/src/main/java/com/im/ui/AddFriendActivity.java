@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.codesaid.lib_framework.base.BaseUIActivity;
+import com.codesaid.lib_framework.adapter.CommonAdapter;
+import com.codesaid.lib_framework.adapter.CommonViewHolder;
+import com.codesaid.lib_framework.base.BaseBackActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.utils.log.LogUtils;
@@ -34,7 +36,7 @@ import cn.bmob.v3.listener.FindListener;
  * Package Name: com.im.ui
  * desc : 添加好友页面
  */
-public class AddFriendActivity extends BaseUIActivity implements View.OnClickListener {
+public class AddFriendActivity extends BaseBackActivity implements View.OnClickListener {
 
     //标题
     public static final int TYPE_TITLE = 0;
@@ -54,7 +56,7 @@ public class AddFriendActivity extends BaseUIActivity implements View.OnClickLis
 
     private View include_empty_view;
 
-    private AddFriendAdapter mAddFriendAdapter;
+    private CommonAdapter<AddFriendModel> mAddFriendAdapter;
     private List<AddFriendModel> mList = new ArrayList<>();
 
     @Override
@@ -82,12 +84,49 @@ public class AddFriendActivity extends BaseUIActivity implements View.OnClickLis
         mSearchResultView.setLayoutManager(new LinearLayoutManager(this));
         mSearchResultView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        mAddFriendAdapter = new AddFriendAdapter(this, mList);
+        // mAddFriendAdapter = new AddFriendAdapter(this, mList);
 
-        mAddFriendAdapter.setOnClickListener(new AddFriendAdapter.onClickListener() {
+
+        //        mAddFriendAdapter.setOnClickListener(new AddFriendAdapter.onClickListener() {
+        //            @Override
+        //            public void onClick(int position) {
+        //
+        //            }
+        //        });
+
+        mAddFriendAdapter = new CommonAdapter<>(mList, new CommonAdapter.onBindMoreDataListener<AddFriendModel>() {
             @Override
-            public void onClick(int position) {
+            public int getItemType(int position) {
+                return mList.get(position).getType();
+            }
 
+            @Override
+            public void onBindViewHolder(AddFriendModel model, CommonViewHolder holder, int type, int position) {
+                if (type == TYPE_TITLE) {
+                    holder.setText(R.id.tv_title, model.getTitle());
+                } else if (type == TYPE_CONTENT) {
+                    //设置头像
+                    holder.setImgUrl(AddFriendActivity.this, R.id.iv_photo, model.getPhoto());
+                    //设置性别
+                    holder.setImgResource(R.id.iv_sex,
+                            model.isSex() ? R.drawable.img_boy_icon : R.drawable.img_girl_icon);
+                    //设置昵称
+                    holder.setText(R.id.tv_nickname, model.getNickName());
+                    //年龄
+                    holder.setText(R.id.tv_age, model.getAge() + getString(R.string.text_search_age));
+                    //设置描述
+                    holder.setText(R.id.tv_desc, model.getDesc());
+                }
+            }
+
+            @Override
+            public int getLayoutId(int type) {
+                if (type == TYPE_TITLE) {
+                    return R.layout.layout_search_title_item;
+                } else if (type == TYPE_CONTENT) {
+                    return R.layout.layout_search_user_item;
+                }
+                return 0;
             }
         });
 

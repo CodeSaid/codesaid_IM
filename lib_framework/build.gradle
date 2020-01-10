@@ -60,6 +60,8 @@ dependencies {
 
     api this.rootProject.depsLibs.glide
 
+    api this.rootProject.depsLibs.recyclerview
+
     // toast
     implementation this.rootProject.depsLibs.toast
 }

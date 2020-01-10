@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.codesaid.lib_framework.base.BaseUIActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
+import com.codesaid.lib_framework.data.SimulationData;
 import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.codesaid.lib_framework.view.DialogManager;
