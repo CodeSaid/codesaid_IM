@@ -24,7 +24,11 @@ public class BaseApplication extends Application {
          * 3.非必要的组件，子线程中初始化
          */
 
-        Framework.getInstance().initFramework(this);
+        //只在主进程中初始化
+        if (getApplicationInfo().packageName.equals(
+                getCurProcessName(getApplicationContext()))) {
+            Framework.getInstance().initFramework(this);
+        }
     }
 
     @Override

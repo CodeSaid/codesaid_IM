@@ -104,6 +104,17 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
+        <!--    融云 离线消息    -->
+        <receiver
+            android:name=".receiver.SealNotificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="io.rong.push.intent.MESSAGE_ARRIVED" />
+                <action android:name="io.rong.push.intent.MESSAGE_CLICKED" />
+                <action android:name="io.rong.push.intent.THIRD_PARTY_PUSH_STATE" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
