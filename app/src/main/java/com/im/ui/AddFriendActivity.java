@@ -20,6 +20,7 @@ import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.toast.ToastUtils;
+import com.codesaid.lib_framework.view.LoadingView;
 import com.im.R;
 import com.im.adapter.AddFriendAdapter;
 import com.im.model.AddFriendModel;
@@ -58,6 +59,7 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
 
     private CommonAdapter<AddFriendModel> mAddFriendAdapter;
     private List<AddFriendModel> mList = new ArrayList<>();
+    private LoadingView mLoadingView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,12 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
         setContentView(R.layout.activity_add_friend);
 
         initView();
+
+        initDialog();
+    }
+
+    private void initDialog() {
+        mLoadingView = new LoadingView(this);
     }
 
     private void initView() {
@@ -101,7 +109,7 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
             }
 
             @Override
-            public void onBindViewHolder(AddFriendModel model, CommonViewHolder holder, int type, int position) {
+            public void onBindViewHolder(final AddFriendModel model, CommonViewHolder holder, int type, int position) {
                 if (type == TYPE_TITLE) {
                     holder.setText(R.id.tv_title, model.getTitle());
                 } else if (type == TYPE_CONTENT) {
@@ -116,6 +124,14 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
                     holder.setText(R.id.tv_age, model.getAge() + getString(R.string.text_search_age));
                     //设置描述
                     holder.setText(R.id.tv_desc, model.getDesc());
+
+                    //  点击事件
+                    holder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            UserInfoActivity.startActivity(AddFriendActivity.this, model.getUserId());
+                        }
+                    });
                 }
             }
 
@@ -171,10 +187,14 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
             return;
         }
 
+        // 显示Loading view
+        mLoadingView.show("正在查询中...");
+
         BmobManager.getInstance().queryPhoneUser(phone, new FindListener<IMUser>() {
             @Override
             public void done(List<IMUser> list, BmobException e) {
                 if (!list.isEmpty()) {
+                    mLoadingView.hide();
                     IMUser user = list.get(0);
                     include_empty_view.setVisibility(View.GONE);
                     mSearchResultView.setVisibility(View.VISIBLE);
@@ -187,9 +207,8 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
 
                     // 添加推荐好友
                     pushUser();
-
-
                 } else {
+                    mLoadingView.hide();
                     // 显示空 View
                     include_empty_view.setVisibility(View.VISIBLE);
                     mSearchResultView.setVisibility(View.GONE);
@@ -211,9 +230,11 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
                         addTitle("推荐好友");
                         int num = (list.size() < 100) ? list.size() : 100;
                         for (int i = 0; i < num; i++) {
-                            // 过滤自己
+                            // 过滤自己 和 查询的用户
                             String phoneNumber = BmobManager.getInstance().getUser().getMobilePhoneNumber();
-                            if (phoneNumber.equals(list.get(i).getMobilePhoneNumber())) {
+                            String searchNumber = et_phone.getText().toString().trim();
+                            if (phoneNumber.equals(list.get(i).getMobilePhoneNumber())
+                                    || searchNumber.equals(list.get(i).getMobilePhoneNumber())) {
                                 continue;
                             }
                             addContent(list.get(i));

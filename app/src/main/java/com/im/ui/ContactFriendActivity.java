@@ -60,7 +60,8 @@ public class ContactFriendActivity extends BaseBackActivity {
         mContactAdapter.setOnClickListener(new AddFriendAdapter.onClickListener() {
             @Override
             public void onClick(int position) {
-
+                UserInfoActivity.startActivity(ContactFriendActivity.this,
+                        mList.get(position).getUserId());
             }
         });
 
