@@ -24,7 +24,9 @@ ext {
             gson            : '2.8.5',
             toast           : 'V1.1.9',
             tagcloud        : '1.2.0',
-            circleimageview : '3.0.0'
+            circleimageview : '3.0.0',
+            litepal         : '3.0.0',
+            eventbus        : '3.1.1'
     ]
 
 
@@ -44,6 +46,8 @@ ext {
             gson            : "com.google.code.gson:gson:${depsVersion.gson}",
             toast           : "com.github.maning0303:MNProgressHUD:${depsVersion.toast}",
             tagcloud        : "com.moxun:tagcloudlib:${depsVersion.tagcloud}",
-            circleimageview : "de.hdodenhof:circleimageview:${depsVersion.circleimageview}"
+            circleimageview : "de.hdodenhof:circleimageview:${depsVersion.circleimageview}",
+            litepal         : "org.litepal.android:java:${depsVersion.litepal}",
+            eventbus        : "org.greenrobot:eventbus:${depsVersion.eventbus}"
     ]
 }

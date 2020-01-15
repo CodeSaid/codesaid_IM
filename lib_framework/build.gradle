@@ -62,6 +62,11 @@ dependencies {
 
     api this.rootProject.depsLibs.recyclerview
 
+    //litepal
+    api this.rootProject.depsLibs.litepal
+    //eventbus
+    api this.rootProject.depsLibs.eventbus
+
     // toast
     implementation this.rootProject.depsLibs.toast
 
