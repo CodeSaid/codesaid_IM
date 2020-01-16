@@ -155,6 +155,27 @@ public class BmobManager {
     }
 
     /**
+     * 根据 user id 查询用户
+     *
+     * @param objectId user id
+     * @param listener listener
+     */
+    public void queryObjectIdUser(String objectId, FindListener<IMUser> listener) {
+        baseQuery("objectId", objectId, listener);
+    }
+
+    /**
+     * 查询好友
+     *
+     * @param listener listener
+     */
+    public void queryFriends(FindListener<Friend> listener) {
+        BmobQuery<Friend> query = new BmobQuery<>();
+        query.addWhereEqualTo("user", getUser());
+        query.findObjects(listener);
+    }
+
+    /**
      * 查询所有好友
      *
      * @param listener listener

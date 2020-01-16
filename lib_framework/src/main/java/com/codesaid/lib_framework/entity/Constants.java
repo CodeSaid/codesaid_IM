@@ -15,4 +15,7 @@ public class Constants {
 
     // 手机号码
     public static final String SP_PHONE = "phone";
+
+    //Intent 传递
+    public static final String INTENT_USER_ID = "intent_user_id";
 }

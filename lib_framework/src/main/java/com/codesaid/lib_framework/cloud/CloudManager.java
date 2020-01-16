@@ -6,6 +6,9 @@ import android.net.Uri;
 
 import com.codesaid.lib_framework.utils.log.LogUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 
 import io.rong.imlib.IRongCallback;
@@ -34,6 +37,15 @@ public class CloudManager {
     public static final String MSG_TEXT_NAME = "RC:TxtMsg";
     public static final String MSG_IMAGE_NAME = "RC:ImgMsg";
     public static final String MSG_LOCATION_NAME = "RC:LBSMsg";
+
+    //Msg Type
+
+    //普通消息
+    public static final String TYPE_TEXT = "TYPE_TEXT";
+    //添加好友消息
+    public static final String TYPE_ADD_FRIEND = "TYPE_ADD_FRIEND";
+    //同意添加好友的消息
+    public static final String TYPE_ARGEED_FRIEND = "TYPE_ARGEED_FRIEND";
 
     private static volatile CloudManager mInstance = null;
 
@@ -93,7 +105,7 @@ public class CloudManager {
             @Override
             public void onSuccess(String userId) {
                 LogUtils.e("connect success: " + userId);
-                CloudManager.getInstance().sendTextMessage("Hello World!", "7425fe25ae");
+                //CloudManager.getInstance().sendTextMessage("Hello World!", "7425fe25ae");
             }
 
             /**
@@ -189,6 +201,25 @@ public class CloudManager {
                         textMessage,
                         null, null,
                         sendMessageCallback);
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param msg      msg
+     * @param type     type
+     * @param targetId targetId
+     */
+    public void sendTextMessage(String msg, String type, String targetId) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("msg", msg);
+            // 如果没有 type  就是普通的文本消息
+            json.put("type", type);
+            sendTextMessage(json.toString(), targetId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

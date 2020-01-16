@@ -6,6 +6,8 @@ import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 
+import org.litepal.LitePal;
+
 /**
  * Created By codesaid
  * On :2019-12-21
@@ -34,5 +36,6 @@ public class Framework {
         SpUtils.getInstance().initSp(context);
         BmobManager.getInstance().init(context);
         CloudManager.getInstance().initCloud(context);
+        LitePal.initialize(context);
     }
 }

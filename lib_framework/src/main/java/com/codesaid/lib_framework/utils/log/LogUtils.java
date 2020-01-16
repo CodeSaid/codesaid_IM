@@ -35,7 +35,7 @@ public class LogUtils {
             // 判断是否为空
             if (!TextUtils.isEmpty(text)) {
                 Log.i(BuildConfig.LOG_TAG, text);
-                writeLogToFile(text);
+                //writeLogToFile(text);
             }
         }
     }
@@ -46,7 +46,7 @@ public class LogUtils {
             // 判断是否为空
             if (!TextUtils.isEmpty(text)) {
                 Log.e(BuildConfig.LOG_TAG, text);
-                writeLogToFile(text);
+                //writeLogToFile(text);
             }
         }
     }
@@ -57,7 +57,7 @@ public class LogUtils {
             // 判断是否为空
             if (!TextUtils.isEmpty(text)) {
                 Log.w(BuildConfig.LOG_TAG, text);
-                writeLogToFile(text);
+                //writeLogToFile(text);
             }
         }
     }
@@ -68,7 +68,7 @@ public class LogUtils {
             // 判断是否为空
             if (!TextUtils.isEmpty(text)) {
                 Log.d(BuildConfig.LOG_TAG, text);
-                writeLogToFile(text);
+                //writeLogToFile(text);
             }
         }
     }
@@ -79,7 +79,7 @@ public class LogUtils {
             // 判断是否为空
             if (!TextUtils.isEmpty(text)) {
                 Log.v(BuildConfig.LOG_TAG, text);
-                writeLogToFile(text);
+                //writeLogToFile(text);
             }
         }
     }
