@@ -95,6 +95,11 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <!--    新朋友    -->
+        <activity
+            android:name=".ui.NewFriendActivity"
+            android:label="@string/text_me_item_title_3" />
+
         <service android:name=".service.CloudService" />
 
         <!--   FileProvider     -->

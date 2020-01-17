@@ -1,5 +1,6 @@
 package com.im.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.helper.GlideHelper;
 import com.im.R;
+import com.im.ui.NewFriendActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -76,6 +78,11 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-
+        switch (view.getId()) {
+            case R.id.ll_new_friend:
+                //新朋友
+                startActivity(new Intent(getActivity(), NewFriendActivity.class));
+                break;
+        }
     }
 }

@@ -8,13 +8,27 @@ import android.text.TextUtils;
 import androidx.annotation.Nullable;
 
 import com.codesaid.lib_framework.bean.TextBean;
+import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.db.LitePalHelper;
+import com.codesaid.lib_framework.db.NewFriend;
 import com.codesaid.lib_framework.entity.Constants;
+import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.google.gson.Gson;
 
+import java.util.List;
+
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.SaveListener;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
 import io.rong.message.TextMessage;
@@ -26,6 +40,8 @@ import io.rong.message.TextMessage;
  * desc : 云服务
  */
 public class CloudService extends Service {
+
+    private Disposable mDisposable;
 
     @Nullable
     @Override
@@ -52,7 +68,7 @@ public class CloudService extends Service {
         // 接受消息
         CloudManager.getInstance().setOnReceiveMessageListener(new RongIMClient.OnReceiveMessageListener() {
             @Override
-            public boolean onReceived(Message message, int i) {
+            public boolean onReceived(final Message message, int i) {
                 LogUtils.e("message: " + message);
                 String objectName = message.getObjectName();
 
@@ -62,23 +78,71 @@ public class CloudService extends Service {
                     String content = textMessage.getContent();
                     LogUtils.i("content: " + content);
                     if (!TextUtils.isEmpty(content)) {
-                        TextBean textBean = new Gson().fromJson(content, TextBean.class);
+                        final TextBean textBean = new Gson().fromJson(content, TextBean.class);
 
                         if (textBean.getType().equals(CloudManager.TYPE_TEXT)) { // 普通消息
 
                         } else if (textBean.getType().equals(CloudManager.TYPE_ADD_FRIEND)) { // 添加好友消息
-                            // 存入数据库
                             LogUtils.i("收到添加好友消息");
-                            LitePalHelper
-                                    .getInstance()
-                                    .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
+                            mDisposable = Observable.create(new ObservableOnSubscribe<List<NewFriend>>() {
+                                @Override
+                                public void subscribe(ObservableEmitter<List<NewFriend>> emitter) throws Exception {
+                                    emitter.onNext(LitePalHelper.getInstance().queryNewFriend());
+                                }
+                            }).subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new Consumer<List<NewFriend>>() {
+                                        @Override
+                                        public void accept(List<NewFriend> newFriends) throws Exception {
+                                            boolean isHave = false;
+                                            if (newFriends != null && newFriends.size() > 0) {
+                                                for (int j = 0; j < newFriends.size(); j++) {
+                                                    NewFriend friend = newFriends.get(j);
+                                                    if (message.getSenderUserId().equals(friend.getId())) {
+                                                        isHave = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!isHave) {
+                                                    // 存入数据库
+                                                    LitePalHelper
+                                                            .getInstance()
+                                                            .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
+                                                }
+                                            } else {
+                                                if (!isHave) {
+                                                    // 存入数据库
+                                                    LitePalHelper
+                                                            .getInstance()
+                                                            .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
+                                                }
+                                            }
+                                        }
+                                    });
                         } else if (textBean.getType().equals(CloudManager.TYPE_ARGEED_FRIEND)) { // 同意添加好友消息
-
+                            // 添加到好友列表
+                            BmobManager.getInstance().addFriend(message.getSenderUserId(), new SaveListener<String>() {
+                                @Override
+                                public void done(String s, BmobException e) {
+                                    if (e == null) {
+                                        // 刷新好友列表
+                                        EventManager.post(EventManager.FLAG_UPDATE_FRIEND);
+                                    }
+                                }
+                            });
                         }
                     }
                 }
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 }

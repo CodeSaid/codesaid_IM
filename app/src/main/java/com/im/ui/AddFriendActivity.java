@@ -193,7 +193,7 @@ public class AddFriendActivity extends BaseBackActivity implements View.OnClickL
         BmobManager.getInstance().queryPhoneUser(phone, new FindListener<IMUser>() {
             @Override
             public void done(List<IMUser> list, BmobException e) {
-                if (!list.isEmpty()) {
+                if (list != null && list.size() > 0) {
                     mLoadingView.hide();
                     IMUser user = list.get(0);
                     include_empty_view.setVisibility(View.GONE);
