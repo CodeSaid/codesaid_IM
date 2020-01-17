@@ -3,6 +3,7 @@ package com.codesaid.lib_framework.bmob;
 import android.content.Context;
 
 import java.io.File;
+import java.util.List;
 
 import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
@@ -13,6 +14,7 @@ import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
+import cn.bmob.v3.listener.SaveListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
@@ -183,6 +185,38 @@ public class BmobManager {
     public void queryAllUser(FindListener<IMUser> listener) {
         BmobQuery<IMUser> query = new BmobQuery<>();
         query.findObjects(listener);
+    }
+
+    /**
+     * 添加好友
+     *
+     * @param user     user
+     * @param listener listener
+     */
+    public void addFriend(IMUser user, SaveListener<String> listener) {
+        Friend friend = new Friend();
+        friend.setUser(getUser());
+        friend.setFriendUser(user);
+        friend.save(listener);
+    }
+
+    /**
+     * 添加好友
+     *
+     * @param userId   user id
+     * @param listener listener
+     */
+    public void addFriend(String userId, final SaveListener<String> listener) {
+        queryObjectIdUser(userId, new FindListener<IMUser>() {
+            @Override
+            public void done(List<IMUser> list, BmobException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        addFriend(list.get(0), listener);
+                    }
+                }
+            }
+        });
     }
 
     public interface onUploadPhotoListener {

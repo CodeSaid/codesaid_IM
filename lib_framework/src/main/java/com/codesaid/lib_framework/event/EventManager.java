@@ -10,6 +10,9 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class EventManager {
 
+    // 更新好友列表
+    public static final int FLAG_UPDATE_FRIEND = 1000;
+
     /**
      * 注册
      *
