@@ -66,6 +66,8 @@ dependencies {
     api this.rootProject.depsLibs.litepal
     //eventbus
     api this.rootProject.depsLibs.eventbus
+    // tablayout
+    api this.rootProject.depsLibs.tablayout
 
     // toast
     implementation this.rootProject.depsLibs.toast

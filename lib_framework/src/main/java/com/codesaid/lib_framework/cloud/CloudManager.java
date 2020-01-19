@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.List;
 
 import io.rong.imlib.IRongCallback;
 import io.rong.imlib.RongIMClient;
@@ -273,5 +274,12 @@ public class CloudManager {
                         imageMessage,
                         null, null,
                         mSendImageMessageCallback);
+    }
+
+    /**
+     * 查询用户的聊天记录
+     */
+    public void queryChatRecord(RongIMClient.ResultCallback<List<Conversation>> callback) {
+        RongIMClient.getInstance().getConversationList(callback);
     }
 }

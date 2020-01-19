@@ -26,7 +26,8 @@ ext {
             tagcloud        : '1.2.0',
             circleimageview : '3.0.0',
             litepal         : '3.0.0',
-            eventbus        : '3.1.1'
+            eventbus        : '3.1.1',
+            tablayout       : '1.0.0'
     ]
 
 
@@ -48,6 +49,7 @@ ext {
             tagcloud        : "com.moxun:tagcloudlib:${depsVersion.tagcloud}",
             circleimageview : "de.hdodenhof:circleimageview:${depsVersion.circleimageview}",
             litepal         : "org.litepal.android:java:${depsVersion.litepal}",
-            eventbus        : "org.greenrobot:eventbus:${depsVersion.eventbus}"
+            eventbus        : "org.greenrobot:eventbus:${depsVersion.eventbus}",
+            tablayout       : "com.google.android.material:material:${depsVersion.tablayout}"
     ]
 }
