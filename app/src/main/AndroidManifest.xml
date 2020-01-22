@@ -99,6 +99,7 @@
         <activity
             android:name=".ui.NewFriendActivity"
             android:label="@string/text_me_item_title_3" />
+        <activity android:name=".ui.ChatActivity" />
 
         <service android:name=".service.CloudService" />
 
