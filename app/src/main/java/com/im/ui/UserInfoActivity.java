@@ -50,6 +50,7 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
     private EditText et_msg;
     private TextView tv_cancel;
     private TextView tv_add_friend;
+    private IMUser mUser;
 
     /**
      * 跳转到 UserInfoActivity
@@ -169,9 +170,9 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
             public void done(List<IMUser> list, BmobException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        IMUser user = list.get(0);
+                        mUser = list.get(0);
 
-                        updateUserInfo(user);
+                        updateUserInfo(mUser);
                     }
                 }
             }
@@ -194,6 +195,7 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
                         }
                     } else {
                         // 非好友
+
                     }
                 }
             }
@@ -267,7 +269,8 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
                 DialogManager.getInstance().show(mAddFriendDialog);
                 break;
             case R.id.btn_chat:
-
+                ChatActivity.startActivity(UserInfoActivity.this, userId,
+                        mUser.getNickName(), mUser.getPhoto());
                 break;
             case R.id.btn_audio_chat:
 
