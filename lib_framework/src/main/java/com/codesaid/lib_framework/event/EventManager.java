@@ -13,6 +13,9 @@ public class EventManager {
     // 更新好友列表
     public static final int FLAG_UPDATE_FRIEND = 1000;
 
+    // 发送文本数据
+    public static final int FLAG_SEND_TEXT = 1001;
+
     /**
      * 注册
      *
@@ -33,5 +36,9 @@ public class EventManager {
 
     public static void post(int type) {
         EventBus.getDefault().post(new MessageEvent(type));
+    }
+
+    public static void post(MessageEvent event) {
+        EventBus.getDefault().post(event);
     }
 }

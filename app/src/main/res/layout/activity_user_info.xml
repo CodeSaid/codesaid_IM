@@ -95,13 +95,6 @@
                 android:text="@string/text_user_chat"
                 android:textColor="@android:color/white" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="请将融云Key替换成自己申请的Key来体验语音通话和视频通话"
-                android:textSize="12sp" />
-
             <Button
                 android:id="@+id/btn_audio_chat"
                 android:layout_width="match_parent"

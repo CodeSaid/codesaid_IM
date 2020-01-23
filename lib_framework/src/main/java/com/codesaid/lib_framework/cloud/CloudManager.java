@@ -282,4 +282,26 @@ public class CloudManager {
     public void queryChatRecord(RongIMClient.ResultCallback<List<Conversation>> callback) {
         RongIMClient.getInstance().getConversationList(callback);
     }
+
+    /**
+     * 获取本地历史消息
+     *
+     * @param targetId 需要获取的 user id
+     * @param callback callback
+     */
+    public void getHistoryMessage(String targetId, RongIMClient.ResultCallback<List<Message>> callback) {
+        RongIMClient.getInstance().getHistoryMessages(Conversation.ConversationType.PRIVATE,
+                targetId, -1, 200, callback);
+    }
+
+    /**
+     * 获取服务器的历史记录
+     *
+     * @param targetId 需要获取的 user id
+     * @param callback callback
+     */
+    public void getRemoteHistoryMessages(String targetId, RongIMClient.ResultCallback<List<Message>> callback) {
+        RongIMClient.getInstance().getRemoteHistoryMessages(Conversation.ConversationType.PRIVATE
+                , targetId, 0, 20, callback);
+    }
 }
