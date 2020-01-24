@@ -15,6 +15,8 @@ public class EventManager {
 
     // 发送文本数据
     public static final int FLAG_SEND_TEXT = 1001;
+    // 发送图片数据
+    public static final int FLAG_SEND_IMAGE = 1002;
 
     /**
      * 注册

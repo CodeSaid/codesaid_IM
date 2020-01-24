@@ -14,6 +14,16 @@ public class MessageEvent {
     // 文本消息
     private String text;
 
+    // 图片消息
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getUserId() {
         return userId;

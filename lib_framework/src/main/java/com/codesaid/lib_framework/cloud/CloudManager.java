@@ -237,18 +237,19 @@ public class CloudManager {
         @Override
         public void onError(Message message, RongIMClient.ErrorCode errorCode) {
             //发送失败
-            LogUtils.i("send error: " + errorCode);
+            LogUtils.i("send image error: " + errorCode);
         }
 
         @Override
         public void onSuccess(Message message) {
             //发送成功
-            LogUtils.i("send success");
+            LogUtils.i("send image success");
         }
 
         @Override
         public void onProgress(Message message, int i) {
             //发送进度
+            LogUtils.i("onProgress(): " + i);
         }
     };
 
