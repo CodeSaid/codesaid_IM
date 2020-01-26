@@ -14,6 +14,7 @@ import com.codesaid.lib_framework.db.LitePalHelper;
 import com.codesaid.lib_framework.db.NewFriend;
 import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.google.gson.Gson;
@@ -31,6 +32,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
+import io.rong.message.ImageMessage;
 import io.rong.message.TextMessage;
 
 /**
@@ -81,7 +83,10 @@ public class CloudService extends Service {
                         final TextBean textBean = new Gson().fromJson(content, TextBean.class);
 
                         if (textBean.getType().equals(CloudManager.TYPE_TEXT)) { // 普通消息
-
+                            MessageEvent event = new MessageEvent(EventManager.FLAG_SEND_TEXT);
+                            event.setText(textBean.getMsg());
+                            event.setUserId(message.getSenderUserId());
+                            EventManager.post(event);
                         } else if (textBean.getType().equals(CloudManager.TYPE_ADD_FRIEND)) { // 添加好友消息
                             LogUtils.i("收到添加好友消息");
                             mDisposable = Observable.create(new ObservableOnSubscribe<List<NewFriend>>() {
@@ -103,6 +108,7 @@ public class CloudService extends Service {
                                                         break;
                                                     }
                                                 }
+                                                // 防止重复添加
                                                 if (!isHave) {
                                                     // 存入数据库
                                                     LitePalHelper
@@ -110,12 +116,10 @@ public class CloudService extends Service {
                                                             .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
                                                 }
                                             } else {
-                                                if (!isHave) {
-                                                    // 存入数据库
-                                                    LitePalHelper
-                                                            .getInstance()
-                                                            .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
-                                                }
+                                                // 存入数据库
+                                                LitePalHelper
+                                                        .getInstance()
+                                                        .saveNewFriend(textBean.getMsg(), message.getSenderUserId());
                                             }
                                         }
                                     });
@@ -131,6 +135,16 @@ public class CloudService extends Service {
                                 }
                             });
                         }
+                    }
+                } else if (objectName.equals(CloudManager.MSG_IMAGE_NAME)) { // 图片消息
+                    ImageMessage imageMessage = (ImageMessage) message.getContent();
+                    String url = imageMessage.getRemoteUri().toString();
+                    if (!TextUtils.isEmpty(url)) {
+                        LogUtils.i("Image: " + url);
+                        MessageEvent event = new MessageEvent(EventManager.FLAG_SEND_IMAGE);
+                        event.setImageUrl(url);
+                        event.setUserId(message.getSenderUserId());
+                        EventManager.post(event);
                     }
                 }
                 return false;
