@@ -68,6 +68,8 @@ dependencies {
     api this.rootProject.depsLibs.eventbus
     // tablayout
     api this.rootProject.depsLibs.tablayout
+    // photoview
+    api this.rootProject.depsLibs.photoview
 
     // toast
     implementation this.rootProject.depsLibs.toast

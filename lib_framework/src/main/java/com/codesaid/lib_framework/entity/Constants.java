@@ -20,4 +20,9 @@ public class Constants {
     public static final String INTENT_USER_ID = "intent_user_id";
     public static final String INTENT_USER_PHOTO = "intent_user_photo";
     public static final String INTENT_USER_NAME = "intent_user_name";
+
+    // 图片地址
+    public static final String INTENT_IMAGE_URL = "intent_image_url";
+    // 图片类型
+    public static final String INTENT_IMAGE_TYPE = "intent_image_TYPE";
 }

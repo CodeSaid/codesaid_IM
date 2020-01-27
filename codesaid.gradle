@@ -27,7 +27,8 @@ ext {
             circleimageview : '3.0.0',
             litepal         : '3.0.0',
             eventbus        : '3.1.1',
-            tablayout       : '1.0.0'
+            tablayout       : '1.0.0',
+            photoview       : '2.3.0'
     ]
 
 
@@ -50,6 +51,7 @@ ext {
             circleimageview : "de.hdodenhof:circleimageview:${depsVersion.circleimageview}",
             litepal         : "org.litepal.android:java:${depsVersion.litepal}",
             eventbus        : "org.greenrobot:eventbus:${depsVersion.eventbus}",
-            tablayout       : "com.google.android.material:material:${depsVersion.tablayout}"
+            tablayout       : "com.google.android.material:material:${depsVersion.tablayout}",
+            photoview: "com.github.chrisbanes:PhotoView:${depsVersion.photoview}"
     ]
 }
