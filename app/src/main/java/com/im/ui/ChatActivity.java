@@ -141,7 +141,7 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
             }
 
             @Override
-            public void onBindViewHolder(ChatModel model, CommonViewHolder holder, int type, int position) {
+            public void onBindViewHolder(final ChatModel model, CommonViewHolder holder, int type, int position) {
                 switch (model.getType()) {
                     case TYPE_LEFT_TEXT:
                         holder.setText(R.id.tv_left_text, model.getText());
@@ -150,6 +150,14 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                     case TYPE_LEFT_IMAGE:
                         holder.setImgUrl(ChatActivity.this, R.id.iv_left_img, model.getImgUrl());
                         holder.setImgUrl(ChatActivity.this, R.id.iv_left_photo, mYourPhoto);
+
+                        holder.getView(R.id.iv_left_img).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ImagePreviewActivity.startActivity(ChatActivity.this,
+                                        true, model.getImgUrl());
+                            }
+                        });
                         break;
                     case TYPE_LEFT_LOCATION:
                         break;
@@ -162,9 +170,25 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                             if (model.getLocalFile() != null) {
                                 // 加载本地文件
                                 holder.setImgFile(ChatActivity.this, R.id.iv_right_img, model.getLocalFile());
+
+                                holder.getView(R.id.iv_right_img).setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        ImagePreviewActivity.startActivity(ChatActivity.this,
+                                                false, model.getLocalFile().getPath());
+                                    }
+                                });
                             }
                         } else {
                             holder.setImgUrl(ChatActivity.this, R.id.iv_right_img, model.getImgUrl());
+
+                            holder.getView(R.id.iv_right_img).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    ImagePreviewActivity.startActivity(ChatActivity.this,
+                                            true, model.getImgUrl());
+                                }
+                            });
                         }
                         holder.setImgUrl(ChatActivity.this, R.id.iv_right_photo, mMePhoto);
                         break;

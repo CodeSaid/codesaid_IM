@@ -100,6 +100,9 @@
             android:name=".ui.NewFriendActivity"
             android:label="@string/text_me_item_title_3" />
         <activity android:name=".ui.ChatActivity" />
+        <activity
+            android:name=".ui.ImagePreviewActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service android:name=".service.CloudService" />
 

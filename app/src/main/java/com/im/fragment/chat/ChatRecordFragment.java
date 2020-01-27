@@ -22,6 +22,7 @@ import com.codesaid.lib_framework.cloud.CloudManager;
 import com.google.gson.Gson;
 import com.im.R;
 import com.im.model.ChatRecordModel;
+import com.im.ui.ChatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,7 +72,7 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
 
         mAdapter = new CommonAdapter<>(mList, new CommonAdapter.onBindDataListener<ChatRecordModel>() {
             @Override
-            public void onBindViewHolder(ChatRecordModel model, CommonViewHolder holder, int type, int position) {
+            public void onBindViewHolder(final ChatRecordModel model, CommonViewHolder holder, int type, int position) {
                 holder.setImgUrl(getActivity(), R.id.iv_photo, model.getUrl());
                 holder.setText(R.id.tv_nickname, model.getNickName());
                 holder.setText(R.id.tv_content, model.getEndMsg());
@@ -82,6 +83,14 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
                     holder.getView(R.id.tv_un_read).setVisibility(View.VISIBLE);
                     holder.setText(R.id.tv_un_read, model.getUnReadSize() + "");
                 }
+
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ChatActivity.startActivity(getActivity(),
+                                model.getUserId(), model.getNickName(), model.getUrl());
+                    }
+                });
             }
 
             @Override
@@ -122,6 +131,7 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
                                     if (list != null && list.size() > 0) {
                                         IMUser user = list.get(0);
                                         ChatRecordModel model = new ChatRecordModel();
+                                        model.setUserId(user.getObjectId());
                                         model.setUrl(user.getPhoto());
                                         model.setNickName(user.getNickName());
                                         model.setTime(new SimpleDateFormat("HH:mm:ss", Locale.CHINA)
@@ -179,6 +189,15 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
 
     @Override
     public void onRefresh() {
+        if (mChatRecordRefreshLayout.isRefreshing()) {
+            // 查询聊天记录
+            queryChatRecord();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if (mChatRecordRefreshLayout.isRefreshing()) {
             // 查询聊天记录
             queryChatRecord();
