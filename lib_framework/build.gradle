@@ -71,6 +71,11 @@ dependencies {
     // photoview
     api this.rootProject.depsLibs.photoview
 
+    // 高德
+    api this.rootProject.depsLibs.map
+    api this.rootProject.depsLibs.location
+    api this.rootProject.depsLibs.search
+
     // toast
     implementation this.rootProject.depsLibs.toast
 

@@ -28,7 +28,10 @@ ext {
             litepal         : '3.0.0',
             eventbus        : '3.1.1',
             tablayout       : '1.0.0',
-            photoview       : '2.3.0'
+            photoview       : '2.3.0',
+            map             : '5.0.0',
+            location        : '3.3.0',
+            search          : '5.0.0'
     ]
 
 
@@ -52,6 +55,9 @@ ext {
             litepal         : "org.litepal.android:java:${depsVersion.litepal}",
             eventbus        : "org.greenrobot:eventbus:${depsVersion.eventbus}",
             tablayout       : "com.google.android.material:material:${depsVersion.tablayout}",
-            photoview: "com.github.chrisbanes:PhotoView:${depsVersion.photoview}"
+            photoview       : "com.github.chrisbanes:PhotoView:${depsVersion.photoview}",
+            map             : "com.amap.api:3dmap:${depsVersion.map}",
+            location        : "com.amap.api:location:${depsVersion.location}",
+            search          : "com.amap.api:search:${depsVersion.search}"
     ]
 }
