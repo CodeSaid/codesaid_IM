@@ -33,6 +33,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <!--高德地图-->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="57fd3883937e152857afcf570214d5dd" />
+
         <!-- Bmob  -->
         <provider
             android:name="cn.bmob.v3.util.BmobContentProvider"
@@ -103,6 +108,7 @@
         <activity
             android:name=".ui.ImagePreviewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity android:name=".ui.LocationActivity" />
 
         <service android:name=".service.CloudService" />
 

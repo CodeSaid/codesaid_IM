@@ -25,4 +25,7 @@ public class Constants {
     public static final String INTENT_IMAGE_URL = "intent_image_url";
     // 图片类型
     public static final String INTENT_IMAGE_TYPE = "intent_image_TYPE";
+
+    // 是否显示地图
+    public static final String INTENT_MAP_SHOW = "intent_map_show";
 }
