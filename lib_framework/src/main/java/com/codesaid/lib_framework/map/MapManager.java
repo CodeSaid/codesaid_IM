@@ -10,6 +10,7 @@ import com.amap.api.services.geocoder.GeocodeResult;
 import com.amap.api.services.geocoder.GeocodeSearch;
 import com.amap.api.services.geocoder.RegeocodeQuery;
 import com.amap.api.services.geocoder.RegeocodeResult;
+import com.codesaid.lib_framework.utils.log.LogUtils;
 
 /**
  * Created By codesaid
@@ -112,5 +113,20 @@ public class MapManager {
         void poi2address(String address);
 
         void address2poi(double la, double lo, String address);
+    }
+
+    /**
+     * 获取静态地图Url
+     *
+     * @param la
+     * @param lo
+     * @return
+     */
+    public String getMapUrl(double la, double lo) {
+        String url = "https://restapi.amap.com/v3/staticmap?location=" + lo + "," + la +
+                "&zoom=17&scale=2&size=150*150&markers=mid,,A:" + lo + ","
+                + la + "&key=" + "b8e77d76adf0bb168f4f41b83b46d38a";
+        LogUtils.i("url:" + url);
+        return url;
     }
 }
