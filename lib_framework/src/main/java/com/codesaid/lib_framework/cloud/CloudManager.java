@@ -1,7 +1,6 @@
 package com.codesaid.lib_framework.cloud;
 
 import android.content.Context;
-import android.media.Image;
 import android.net.Uri;
 
 import com.codesaid.lib_framework.utils.log.LogUtils;
@@ -17,8 +16,8 @@ import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
 import io.rong.imlib.model.Message;
 import io.rong.message.ImageMessage;
+import io.rong.message.LocationMessage;
 import io.rong.message.TextMessage;
-import io.rong.message.VoiceMessage;
 
 /**
  * Created By codesaid
@@ -275,6 +274,27 @@ public class CloudManager {
                         imageMessage,
                         null, null,
                         mSendImageMessageCallback);
+    }
+
+    /**
+     * 发送地址 消息
+     *
+     * @param la       经度
+     * @param lo       纬度
+     * @param poi      地址
+     * @param targetId 目标 id
+     */
+    public void sendLocationMessage(double la, double lo, String poi, String targetId) {
+        LocationMessage locationMessage =
+                LocationMessage.obtain(la, lo, poi, null);
+        Message message = Message.obtain(targetId, Conversation.ConversationType.PRIVATE, locationMessage);
+        RongIMClient
+                .getInstance()
+                .sendLocationMessage(message,
+                        null,
+                        null,
+                        sendMessageCallback);
+
     }
 
     /**
