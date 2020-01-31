@@ -20,6 +20,7 @@ import com.codesaid.lib_framework.bmob.Friend;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.im.R;
 import com.im.model.AllFriendModel;
+import com.im.ui.UserInfoActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,12 +65,20 @@ public class AllFriendFragment extends BaseFragment implements SwipeRefreshLayou
 
         mAdapter = new CommonAdapter<>(mList, new CommonAdapter.onBindDataListener<AllFriendModel>() {
             @Override
-            public void onBindViewHolder(AllFriendModel model, CommonViewHolder holder, int type, int position) {
+            public void onBindViewHolder(final AllFriendModel model, CommonViewHolder holder, int type, int position) {
                 holder.setImgUrl(getActivity(), R.id.iv_photo, model.getUrl());
                 holder.setText(R.id.tv_nickname, model.getNickName());
                 holder.setImgResource(R.id.iv_sex, model.isSex()
                         ? R.drawable.img_boy_icon : R.drawable.img_girl_icon);
                 holder.setText(R.id.tv_desc, model.getDesc());
+
+                // 跳转到好友信息
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        UserInfoActivity.startActivity(getActivity(), model.getUserId());
+                    }
+                });
             }
 
             @Override
@@ -111,6 +120,7 @@ public class AllFriendFragment extends BaseFragment implements SwipeRefreshLayou
                                         if (list != null && list.size() > 0) {
                                             IMUser user = list.get(0);
                                             AllFriendModel model = new AllFriendModel();
+                                            model.setUserId(user.getObjectId());
                                             model.setUrl(user.getPhoto());
                                             model.setNickName(user.getNickName());
                                             model.setSex(user.isSex());
