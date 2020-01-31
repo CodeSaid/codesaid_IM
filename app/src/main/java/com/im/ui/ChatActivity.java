@@ -25,6 +25,7 @@ import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.helper.FileHelper;
+import com.codesaid.lib_framework.map.MapManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.google.gson.Gson;
 import com.im.R;
@@ -60,6 +61,8 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
     public static final int TYPE_RIGHT_TEXT = 3;
     public static final int TYPE_RIGHT_IMAGE = 4;
     public static final int TYPE_RIGHT_LOCATION = 5;
+
+    public static final int LOCATION_REQUEST_CODE = 1999;
 
     // 对方 id
     private String mYourId;
@@ -160,6 +163,16 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                         });
                         break;
                     case TYPE_LEFT_LOCATION:
+                        holder.setImgUrl(ChatActivity.this, R.id.iv_left_photo, mYourPhoto);
+                        holder.setImgUrl(ChatActivity.this, R.id.iv_left_location_img, model.getMapUrl());
+                        holder.setText(R.id.tv_left_address, model.getAddress());
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                LocationActivity.startActivity(ChatActivity.this, false,
+                                        model.getLa(), model.getLo(), model.getAddress(), LOCATION_REQUEST_CODE);
+                            }
+                        });
                         break;
                     case TYPE_RIGHT_TEXT:
                         holder.setText(R.id.tv_right_text, model.getText());
@@ -193,6 +206,16 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                         holder.setImgUrl(ChatActivity.this, R.id.iv_right_photo, mMePhoto);
                         break;
                     case TYPE_RIGHT_LOCATION:
+                        holder.setImgUrl(ChatActivity.this, R.id.iv_right_photo, mMePhoto);
+                        holder.setImgUrl(ChatActivity.this, R.id.iv_right_location_img, model.getMapUrl());
+                        holder.setText(R.id.tv_right_address, model.getAddress());
+                        holder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                LocationActivity.startActivity(ChatActivity.this, false,
+                                        model.getLa(), model.getLo(), model.getAddress(), LOCATION_REQUEST_CODE);
+                            }
+                        });
                         break;
                 }
             }
@@ -299,7 +322,12 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                     addRightImage(url);
                 }
             } else if (objectName.equals(CloudManager.MSG_LOCATION_NAME)) {
-
+                LocationMessage locationMessage = (LocationMessage) message.getContent();
+                if (message.getSenderUserId().equals(mYourId)) {
+                    addLeftLocation(locationMessage.getLat(), locationMessage.getLng(), locationMessage.getPoi());
+                } else {
+                    addRightLocation(locationMessage.getLat(), locationMessage.getLng(), locationMessage.getPoi());
+                }
             }
         }
     }
@@ -341,6 +369,10 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                 break;
             case R.id.ll_pic:
                 FileHelper.getInstance().toAlbum(this);
+                break;
+            case R.id.ll_location: // 发送位置
+                LocationActivity.startActivity(ChatActivity.this, true,
+                        0, 0, "", LOCATION_REQUEST_CODE);
                 break;
         }
     }
@@ -424,6 +456,40 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
         baseAddItem(model);
     }
 
+    /**
+     * 添加左边位置
+     *
+     * @param la      经度
+     * @param lo      纬度
+     * @param address 地址
+     */
+    private void addLeftLocation(double la, double lo, String address) {
+        ChatModel model = new ChatModel();
+        model.setType(TYPE_LEFT_LOCATION);
+        model.setLa(la);
+        model.setLo(lo);
+        model.setAddress(address);
+        model.setMapUrl(MapManager.getInstance().getMapUrl(la, lo));
+        baseAddItem(model);
+    }
+
+    /**
+     * 添加右边位置
+     *
+     * @param la      经度
+     * @param lo      纬度
+     * @param address 地址
+     */
+    private void addRightLocation(double la, double lo, String address) {
+        ChatModel model = new ChatModel();
+        model.setType(TYPE_RIGHT_LOCATION);
+        model.setLa(la);
+        model.setLo(lo);
+        model.setAddress(address);
+        model.setMapUrl(MapManager.getInstance().getMapUrl(la, lo));
+        baseAddItem(model);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
         switch (event.getType()) {
@@ -435,6 +501,11 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
             case EventManager.FLAG_SEND_IMAGE:
                 if (event.getUserId().equals(mYourId)) {
                     addLeftImage(event.getImageUrl());
+                }
+                break;
+            case EventManager.FLAG_SEND_LOCATION:
+                if (event.getUserId().equals(mYourId)) {
+                    addLeftLocation(event.getLa(), event.getLo(), event.getAddress());
                 }
                 break;
         }
@@ -456,13 +527,27 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                         uploadFile = new File(path);
                     }
                 }
-            }
-        }
+            } else if (requestCode == LOCATION_REQUEST_CODE) {
+                double la = data.getDoubleExtra("la", 0);
+                double lo = data.getDoubleExtra("l0", 0);
+                String address = data.getStringExtra("address");
 
-        if (uploadFile != null) {
-            // 发送图片消息
-            CloudManager.getInstance().sendImageMessage(uploadFile, mYourId);
-            addRightImage(uploadFile);
+                LogUtils.e("la: " + la);
+                LogUtils.e("lo: " + lo);
+                LogUtils.e("address: " + address);
+
+                // 发送位置
+                CloudManager.getInstance().sendLocationMessage(la, lo, address, mYourId);
+                // 添加到 UI
+                addRightLocation(la, lo, address);
+            }
+
+            if (uploadFile != null) {
+                // 发送图片消息
+                CloudManager.getInstance().sendImageMessage(uploadFile, mYourId);
+                addRightImage(uploadFile);
+                uploadFile = null;
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);

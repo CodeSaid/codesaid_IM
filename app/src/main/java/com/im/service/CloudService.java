@@ -33,6 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Message;
 import io.rong.message.ImageMessage;
+import io.rong.message.LocationMessage;
 import io.rong.message.TextMessage;
 
 /**
@@ -137,15 +138,28 @@ public class CloudService extends Service {
                         }
                     }
                 } else if (objectName.equals(CloudManager.MSG_IMAGE_NAME)) { // 图片消息
-                    ImageMessage imageMessage = (ImageMessage) message.getContent();
-                    String url = imageMessage.getRemoteUri().toString();
-                    if (!TextUtils.isEmpty(url)) {
-                        LogUtils.i("Image: " + url);
-                        MessageEvent event = new MessageEvent(EventManager.FLAG_SEND_IMAGE);
-                        event.setImageUrl(url);
-                        event.setUserId(message.getSenderUserId());
-                        EventManager.post(event);
+                    try {
+                        ImageMessage imageMessage = (ImageMessage) message.getContent();
+                        String url = imageMessage.getRemoteUri().toString();
+                        if (!TextUtils.isEmpty(url)) {
+                            LogUtils.i("Image: " + url);
+                            MessageEvent event = new MessageEvent(EventManager.FLAG_SEND_IMAGE);
+                            event.setImageUrl(url);
+                            event.setUserId(message.getSenderUserId());
+                            EventManager.post(event);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                } else if (objectName.equals(CloudManager.MSG_LOCATION_NAME)) {
+                    LocationMessage locationMessage = (LocationMessage) message.getContent();
+
+                    MessageEvent event = new MessageEvent(EventManager.FLAG_SEND_LOCATION);
+                    event.setLa(locationMessage.getLat());
+                    event.setLo(locationMessage.getLng());
+                    event.setAddress(locationMessage.getPoi());
+                    event.setUserId(message.getSenderUserId());
+                    EventManager.post(event);
                 }
                 return false;
             }
