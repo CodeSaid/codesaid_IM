@@ -19,6 +19,7 @@ import com.codesaid.lib_framework.adapter.CommonAdapter;
 import com.codesaid.lib_framework.adapter.CommonViewHolder;
 import com.codesaid.lib_framework.base.BaseBackActivity;
 import com.codesaid.lib_framework.bean.TextBean;
+import com.codesaid.lib_framework.bean.VoiceBean;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.entity.Constants;
@@ -27,7 +28,11 @@ import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.helper.FileHelper;
 import com.codesaid.lib_framework.map.MapManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
+import com.codesaid.lib_framework.voice.VoiceManager;
 import com.google.gson.Gson;
+import com.iflytek.cloud.RecognizerResult;
+import com.iflytek.cloud.SpeechError;
+import com.iflytek.cloud.ui.RecognizerDialogListener;
 import com.im.R;
 import com.im.model.ChatModel;
 
@@ -373,6 +378,37 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
             case R.id.ll_location: // 发送位置
                 LocationActivity.startActivity(ChatActivity.this, true,
                         0, 0, "", LOCATION_REQUEST_CODE);
+                break;
+            case R.id.ll_voice:
+                VoiceManager.getInstance(ChatActivity.this).startSpeak(new RecognizerDialogListener() {
+                    /**
+                     *
+                     * @param recognizerResult 识别的结果
+                     * @param b 是否是最后一次返回的结果
+                     */
+                    @Override
+                    public void onResult(RecognizerResult recognizerResult, boolean b) {
+                        String result = recognizerResult.getResultString();
+                        if (!TextUtils.isEmpty(result)) {
+                            LogUtils.i("result: " + result);
+                            VoiceBean voiceBean = new Gson().fromJson(result, VoiceBean.class);
+                            if (voiceBean.isLs()) {
+                                StringBuffer sb = new StringBuffer();
+                                for (int i = 0; i < voiceBean.getWs().size(); i++) {
+                                    VoiceBean.WsBean wsBean = voiceBean.getWs().get(i);
+                                    sb.append(wsBean.getCw().get(0).getW());
+                                }
+                                LogUtils.i("sb: " + sb.toString());
+                                et_input_msg.setText(sb.toString());
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onError(SpeechError speechError) {
+                        LogUtils.e("speechError: " + speechError.toString());
+                    }
+                });
                 break;
         }
     }
