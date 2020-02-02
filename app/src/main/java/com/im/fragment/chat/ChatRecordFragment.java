@@ -101,7 +101,8 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
 
         mChatRecordView.setAdapter(mAdapter);
 
-        queryChatRecord();
+        // 避免重复加载
+        //queryChatRecord();
     }
 
     /**
@@ -198,9 +199,8 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
     @Override
     public void onResume() {
         super.onResume();
-        if (mChatRecordRefreshLayout.isRefreshing()) {
-            // 查询聊天记录
-            queryChatRecord();
-        }
+        // 查询聊天记录
+        queryChatRecord();
+
     }
 }

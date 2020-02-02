@@ -72,5 +72,7 @@ dependencies {
     implementation this.rootProject.depsLibs.toast
     // Cloud
     api project(path: ':IMLib')
+    // call
+    api project(path: ':CallLib')
     api files('libs/Msc.jar')
 }
