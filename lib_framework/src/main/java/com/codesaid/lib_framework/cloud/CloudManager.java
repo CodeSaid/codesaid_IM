@@ -9,8 +9,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
+import io.rong.calllib.IRongCallListener;
+import io.rong.calllib.IRongReceivedCallListener;
+import io.rong.calllib.RongCallClient;
+import io.rong.calllib.RongCallCommon;
 import io.rong.imlib.IRongCallback;
 import io.rong.imlib.RongIMClient;
 import io.rong.imlib.model.Conversation;
@@ -324,5 +329,150 @@ public class CloudManager {
     public void getRemoteHistoryMessages(String targetId, RongIMClient.ResultCallback<List<Message>> callback) {
         RongIMClient.getInstance().getRemoteHistoryMessages(Conversation.ConversationType.PRIVATE
                 , targetId, 0, 20, callback);
+    }
+
+    //-----------------------------Call Api-------------------------------------------------------------------------
+
+    /**
+     * 拨打 音频 / 视频 通话
+     *
+     * @param targetId 目标 id
+     * @param type     音频 or 视频
+     */
+    public void startCall(String targetId, RongCallCommon.CallMediaType type) {
+        List<String> userIds = new ArrayList<>();
+        userIds.add(targetId);
+        RongCallClient
+                .getInstance()
+                .startCall(Conversation.ConversationType.PRIVATE,
+                        targetId,
+                        userIds,
+                        null,
+                        type,
+                        null);
+    }
+
+    /**
+     * 拨打 音频 通话
+     *
+     * @param targetId 目标 id
+     */
+    public void startAudioCall(String targetId) {
+        startCall(targetId, RongCallCommon.CallMediaType.AUDIO);
+    }
+
+    /**
+     * 拨打 视频 通话
+     *
+     * @param targetId 目标 id
+     */
+    public void startVideoCall(String targetId) {
+        startCall(targetId, RongCallCommon.CallMediaType.VIDEO);
+    }
+
+    /**
+     * 监听 音频 通话
+     *
+     * @param listener listener
+     */
+    public void setReceivedCallListener(IRongReceivedCallListener listener) {
+        RongCallClient.setReceivedCallListener(listener);
+    }
+
+    /**
+     * 接听通话
+     *
+     * @param callId 呼叫id，可以从来电监听的{@link RongCallSession#getCallId()}中获取
+     */
+    public void acceptCall(String callId) {
+        RongCallClient.getInstance().acceptCall(callId);
+    }
+
+    /**
+     * 挂断通话
+     *
+     * @param callId 呼叫id，可以从来电监听的{@link RongCallSession#getCallId()}中获取
+     */
+    public void hangUpCall(String callId) {
+        RongCallClient.getInstance().hangUpCall(callId);
+    }
+
+    /**
+     * 切换 audio，video 通话
+     *
+     * @param mediaType 要切换的媒体类型：audio、video
+     */
+    public void changeCallMediaType(RongCallCommon.CallMediaType mediaType) {
+        RongCallClient.getInstance().changeCallMediaType(mediaType);
+    }
+
+    /**
+     * 前后摄像头切换
+     */
+    public void switchCamera() {
+        RongCallClient.getInstance().switchCamera();
+    }
+
+    /**
+     * 设置是否打开本地摄像头
+     *
+     * @param enabled true:打开摄像头；false:关闭摄像头。
+     */
+    public void setEnableLocalVideo(boolean enabled) {
+        RongCallClient.getInstance().setEnableLocalVideo(enabled);
+    }
+
+    /**
+     * 设置是否打开本地音频
+     *
+     * @param enabled true:打开本地音频 false:关闭本地音频
+     */
+    public void setEnableLocalAudio(boolean enabled) {
+        RongCallClient.getInstance().setEnableLocalAudio(enabled);
+    }
+
+    /**
+     * 设置是否打开免提
+     *
+     * @param enabled true:打开免提 false:关闭免提
+     */
+    public void setEnableSpeakerphone(boolean enabled) {
+        RongCallClient.getInstance().setEnableSpeakerphone(enabled);
+    }
+
+    /**
+     * 开启录音，SDK支持在通话中进行录音，录音文件的格式为wav。应用程序必须保证指定的目录存在而且可写;
+     * 需要在成功加入房间之后调用{@link IRongCallListener#onCallConnected}
+     *
+     * @param filePath 录音文件的完整路径（如：/storage/emulated/0/RongCloud/rong.wav,需要保证存放录音文件的目录在录音开始之前就已经创建完毕）。该录音文件为UTF-8编码
+     */
+    public void startAudioRecording(String filePath) {
+        RongCallClient.getInstance().startAudioRecording(filePath);
+    }
+
+    /**
+     * 关闭录音，在结束音视频通话时候调用 onCallDisconnected。
+     */
+    public void stopAudioRecording() {
+        RongCallClient.getInstance().stopAudioRecording();
+    }
+
+    /**
+     * 检查音视频引擎是否可用
+     *
+     * @param context context
+     * @return true
+     */
+    public boolean isVoIPEnabled(Context context) {
+        return RongCallClient.getInstance().isVoIPEnabled(context);
+    }
+
+    /**
+     * 设置通话状态的回调
+     *
+     * @param listener listener
+     */
+    public void setVoIPCallListener(IRongCallListener listener) {
+        RongCallClient.getInstance().setVoIPCallListener(listener);
     }
 }
