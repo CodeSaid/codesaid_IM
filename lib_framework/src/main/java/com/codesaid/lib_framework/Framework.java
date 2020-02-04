@@ -6,7 +6,7 @@ import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.map.MapManager;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
-import com.codesaid.lib_framework.voice.VoiceManager;
+import com.codesaid.lib_framework.window.WindowHelper;
 
 import org.litepal.LitePal;
 
@@ -41,5 +41,6 @@ public class Framework {
         LitePal.initialize(context);
         MapManager.getInstance().initMap(context);
         //VoiceManager.getInstance().initVoice(context);
+        WindowHelper.getInstance().initWindow(context);
     }
 }
