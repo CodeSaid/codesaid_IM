@@ -1,29 +1,42 @@
 package com.im.service;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
 import com.codesaid.lib_framework.bean.TextBean;
 import com.codesaid.lib_framework.bmob.BmobManager;
+import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.db.LitePalHelper;
 import com.codesaid.lib_framework.db.NewFriend;
 import com.codesaid.lib_framework.entity.Constants;
 import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.event.MessageEvent;
+import com.codesaid.lib_framework.helper.GlideHelper;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
+import com.codesaid.lib_framework.window.WindowHelper;
 import com.google.gson.Gson;
+import com.im.R;
 
 import java.util.List;
 
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -47,9 +60,35 @@ import io.rong.message.TextMessage;
  * Package Name: com.im.service
  * desc : 云服务
  */
-public class CloudService extends Service {
+public class CloudService extends Service implements View.OnClickListener {
 
     private Disposable mDisposable;
+
+    // 音频窗口
+    private View mFullAudioView;
+
+    //头像
+    private CircleImageView audio_iv_photo;
+    //状态
+    private TextView audio_tv_status;
+    //录音图片
+    private ImageView audio_iv_recording;
+    //录音按钮
+    private LinearLayout audio_ll_recording;
+    //接听图片
+    private ImageView audio_iv_answer;
+    //接听按钮
+    private LinearLayout audio_ll_answer;
+    //挂断图片
+    private ImageView audio_iv_hangup;
+    //挂断按钮
+    private LinearLayout audio_ll_hangup;
+    //免提图片
+    private ImageView audio_iv_hf;
+    //免提按钮
+    private LinearLayout audio_ll_hf;
+    //最小化
+    private ImageView audio_iv_small;
 
     @Nullable
     @Override
@@ -61,7 +100,35 @@ public class CloudService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        initWindow();
+
         linkCloudServer();
+    }
+
+    /**
+     * 初始化 窗口
+     */
+    private void initWindow() {
+        // 音频
+        mFullAudioView = WindowHelper.getInstance().getView(R.layout.layout_chat_audio);
+
+        audio_iv_photo = mFullAudioView.findViewById(R.id.audio_iv_photo);
+        audio_tv_status = mFullAudioView.findViewById(R.id.audio_tv_status);
+        audio_iv_recording = mFullAudioView.findViewById(R.id.audio_iv_recording);
+        audio_ll_recording = mFullAudioView.findViewById(R.id.audio_ll_recording);
+        audio_iv_answer = mFullAudioView.findViewById(R.id.audio_iv_answer);
+        audio_ll_answer = mFullAudioView.findViewById(R.id.audio_ll_answer);
+        audio_iv_hangup = mFullAudioView.findViewById(R.id.audio_iv_hangup);
+        audio_ll_hangup = mFullAudioView.findViewById(R.id.audio_ll_hangup);
+        audio_iv_hf = mFullAudioView.findViewById(R.id.audio_iv_hf);
+        audio_ll_hf = mFullAudioView.findViewById(R.id.audio_ll_hf);
+        audio_iv_small = mFullAudioView.findViewById(R.id.audio_iv_small);
+
+        audio_ll_recording.setOnClickListener(this);
+        audio_ll_answer.setOnClickListener(this);
+        audio_ll_hangup.setOnClickListener(this);
+        audio_ll_hf.setOnClickListener(this);
+        audio_iv_small.setOnClickListener(this);
     }
 
     /**
@@ -182,9 +249,26 @@ public class CloudService extends Service {
                 String call = new Gson().toJson(rongCallSession);
                 LogUtils.i("rongCallSession: " + call);
 
+                /**
+                 * 1.获取拨打和接通的ID
+                 * 2.来电的话播放铃声
+                 * 3.加载个人信息去填充
+                 * 4.显示Window
+                 */
+
+                // 呼叫端 id
+                String callerUserId = rongCallSession.getCallerUserId();
+                updateWindowInfo(0, callerUserId);
+
+                // 通话 id
+                String callId = rongCallSession.getCallId();
+
+
                 if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.AUDIO)) {
                     // 音频通话
                     LogUtils.i("音频通话");
+                    WindowHelper.getInstance().showView(mFullAudioView);
+
                 } else if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.VIDEO)) {
                     // 视频通话
                     LogUtils.i("视频通话");
@@ -218,7 +302,22 @@ public class CloudService extends Service {
              */
             @Override
             public void onCallOutgoing(RongCallSession rongCallSession, SurfaceView surfaceView) {
+                String call = new Gson().toJson(rongCallSession);
+                LogUtils.i("rongCallSession: " + call);
 
+                // 目标 id
+                String targetId = rongCallSession.getTargetId();
+                updateWindowInfo(1, targetId);
+
+                if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.AUDIO)) {
+                    // 音频通话
+                    LogUtils.i("音频通话");
+                    WindowHelper.getInstance().showView(mFullAudioView);
+
+                } else if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.VIDEO)) {
+                    // 视频通话
+                    LogUtils.i("视频通话");
+                }
             }
 
             /**
@@ -350,11 +449,47 @@ public class CloudService extends Service {
         });
     }
 
+    /**
+     * 更新窗口上的用户信息
+     *
+     * @param index 0:接听    1:拨打
+     * @param id    user id
+     */
+    private void updateWindowInfo(final int index, String id) {
+        BmobManager.getInstance().queryObjectIdUser(id, new FindListener<IMUser>() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void done(List<IMUser> list, BmobException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        // 呼叫端的 user 信息
+                        IMUser user = list.get(0);
+                        // 设置呼叫的 user photo
+                        GlideHelper.loadUrl(CloudService.this, user.getPhoto(), audio_iv_photo);
+
+                        if (0 == index) {
+                            audio_tv_status.setText(user.getNickName()
+                                    + getString(R.string.text_service_calling));
+                        } else if (1 == index) {
+                            audio_tv_status.setText(getString(R.string.text_service_call_ing)
+                                    + user.getNickName() + "...");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         if (mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+
     }
 }
