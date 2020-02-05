@@ -3,7 +3,9 @@ package com.codesaid.lib_framework.cloud;
 import android.content.Context;
 import android.net.Uri;
 
+import com.codesaid.lib_framework.R;
 import com.codesaid.lib_framework.utils.log.LogUtils;
+import com.codesaid.lib_framework.utils.toast.ToastUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +53,11 @@ public class CloudManager {
     public static final String TYPE_ADD_FRIEND = "TYPE_ADD_FRIEND";
     //同意添加好友的消息
     public static final String TYPE_ARGEED_FRIEND = "TYPE_ARGEED_FRIEND";
+
+    //来电铃声
+    public static final String callAudioPath = "http://downsc.chinaz.net/Files/DownLoad/sound1/201501/5363.wav";
+    //挂断铃声
+    public static final String callAudioHangup = "http://downsc.chinaz.net/Files/DownLoad/sound1/201501/5351.wav";
 
     private static volatile CloudManager mInstance = null;
 
@@ -357,7 +364,11 @@ public class CloudManager {
      *
      * @param targetId 目标 id
      */
-    public void startAudioCall(String targetId) {
+    public void startAudioCall(Context context, String targetId) {
+        // 检查设备是否可用
+        if (!isVoIPEnabled(context)) {
+            return;
+        }
         startCall(targetId, RongCallCommon.CallMediaType.AUDIO);
     }
 
@@ -366,7 +377,11 @@ public class CloudManager {
      *
      * @param targetId 目标 id
      */
-    public void startVideoCall(String targetId) {
+    public void startVideoCall(Context context, String targetId) {
+        // 检查设备是否可用
+        if (!isVoIPEnabled(context)) {
+            return;
+        }
         startCall(targetId, RongCallCommon.CallMediaType.VIDEO);
     }
 
@@ -376,6 +391,9 @@ public class CloudManager {
      * @param listener listener
      */
     public void setReceivedCallListener(IRongReceivedCallListener listener) {
+        if (null == listener) {
+            return;
+        }
         RongCallClient.setReceivedCallListener(listener);
     }
 
@@ -464,7 +482,11 @@ public class CloudManager {
      * @return true
      */
     public boolean isVoIPEnabled(Context context) {
-        return RongCallClient.getInstance().isVoIPEnabled(context);
+        if (!RongCallClient.getInstance().isVoIPEnabled(context)) {
+            ToastUtils.show(context, context.getString(R.string.text_devices_not_supper_audio));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -473,6 +495,9 @@ public class CloudManager {
      * @param listener listener
      */
     public void setVoIPCallListener(IRongCallListener listener) {
+        if (listener == null) {
+            return;
+        }
         RongCallClient.getInstance().setVoIPCallListener(listener);
     }
 }

@@ -26,7 +26,7 @@ public class MediaPlayerManager {
     public static final int MEDIA_STATUS_STOP = 2;
 
     // 当前播放状态
-    public  int MEDIA_STATUS_CURRENT = MEDIA_STATUS_STOP;
+    public int MEDIA_STATUS_CURRENT = MEDIA_STATUS_STOP;
 
     private OnProgressListener onProgressListener;
 
@@ -103,8 +103,17 @@ public class MediaPlayerManager {
      */
     public void pausePlay() {
         if (isPlaying()) {
-            MEDIA_STATUS_CURRENT = MEDIA_STATUS_PAUSE;
             mMediaPlayer.pause();
+            MEDIA_STATUS_CURRENT = MEDIA_STATUS_PAUSE;
+            removeHandler();
+        }
+    }
+
+    /**
+     * 无歌曲不需要监听进度
+     */
+    public void removeHandler() {
+        if (mHandler != null) {
             mHandler.removeMessages(H_PROGRESS);
         }
     }
@@ -124,7 +133,7 @@ public class MediaPlayerManager {
     public void stopPlay() {
         mMediaPlayer.stop();
         MEDIA_STATUS_CURRENT = MEDIA_STATUS_STOP;
-        mHandler.removeMessages(H_PROGRESS);
+        removeHandler();
     }
 
     /**
@@ -203,7 +212,7 @@ public class MediaPlayerManager {
      *
      * @return true 正在播放
      */
-    private boolean isPlaying() {
+    public boolean isPlaying() {
         return mMediaPlayer.isPlaying();
     }
 }
