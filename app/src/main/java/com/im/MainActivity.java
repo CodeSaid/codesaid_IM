@@ -390,6 +390,10 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
 
             }
         });
+
+        if (!checkWindowPermission()) {
+            requestWindowPermission();
+        }
     }
 
     /**

@@ -273,10 +273,20 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
                         mUser.getNickName(), mUser.getPhoto());
                 break;
             case R.id.btn_audio_chat:
-                CloudManager.getInstance().startAudioCall(userId);
+                //窗口权限
+                if (!checkWindowPermission()) {
+                    requestWindowPermission();
+                } else {
+                    CloudManager.getInstance().startAudioCall(UserInfoActivity.this, userId);
+                }
                 break;
             case R.id.btn_video_chat:
-                CloudManager.getInstance().startVideoCall(userId);
+                //窗口权限
+                if (!checkWindowPermission()) {
+                    requestWindowPermission();
+                } else {
+                    CloudManager.getInstance().startVideoCall(UserInfoActivity.this, userId);
+                }
                 break;
         }
     }
