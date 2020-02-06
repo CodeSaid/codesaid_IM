@@ -7,7 +7,8 @@ import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -33,7 +34,6 @@ import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.codesaid.lib_framework.utils.time.TimeUtils;
-import com.codesaid.lib_framework.utils.toast.ToastUtils;
 import com.codesaid.lib_framework.window.WindowHelper;
 import com.google.gson.Gson;
 import com.im.R;
@@ -86,6 +86,7 @@ public class CloudService extends Service implements View.OnClickListener {
                     callTime++;
                     String time = TimeUtils.formatDuring(callTime * 1000);
                     audio_tv_status.setText(time);
+                    mSmallTime.setText(time);
                     mHandler.sendEmptyMessageDelayed(H_TIME_WHAT, 1000);
                     break;
             }
@@ -152,6 +153,21 @@ public class CloudService extends Service implements View.OnClickListener {
 
     // 通话 id
     private String mCallId = "";
+
+    // 最小化 音频 View
+    private WindowManager.LayoutParams mLpSmallViewParams;
+    private View mSmallAudioView;
+
+    //时间
+    private TextView mSmallTime;
+
+    private int mLastX;
+    private int mLastY;
+
+    // 是否移动
+    private boolean isMove = false;
+    // 是否点击
+    private boolean isDrag = false;
 
     @Nullable
     @Override
@@ -228,6 +244,81 @@ public class CloudService extends Service implements View.OnClickListener {
         video_ll_answer.setOnClickListener(this);
         video_ll_hangup.setOnClickListener(this);
         video_small_video.setOnClickListener(this);
+
+        createSmallAudioView();
+    }
+
+    /**
+     * 创建最小化 音频 窗口
+     */
+    private void createSmallAudioView() {
+        mLpSmallViewParams = WindowHelper.getInstance().createLayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                Gravity.TOP | Gravity.LEFT);
+        mSmallAudioView = WindowHelper.getInstance().getView(R.layout.layout_chat_small_audio);
+
+        mSmallTime = mSmallAudioView.findViewById(R.id.mSmallTime);
+
+        mSmallAudioView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                WindowHelper.getInstance().showView(mFullAudioView);
+                WindowHelper.getInstance().hideView(mSmallAudioView);
+            }
+        });
+
+        mSmallAudioView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                /**
+                 * OnTouch 和 OnClick 点击冲突
+                 * 如何判断是点击 还是 移动
+                 * 通过点击下的坐标 - 落地的坐标 如果移动则说明是移动 如果 = 0 ，那说明没有移动则是点击
+                 */
+
+                int mStartX = (int) event.getRawX();
+                int mStartY = (int) event.getRawY();
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isMove = false;
+                        isDrag = false;
+
+                        mLastX = (int) event.getRawX();
+                        mLastY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // 计算偏移量
+                        int dx = mStartX - mLastX;
+                        int dy = mStartY - mLastY;
+
+                        if (isMove) {
+                            isDrag = true;
+                        } else {
+                            if (dx == 0 && dy == 0) {
+                                isMove = false;
+                            } else {
+                                isMove = true;
+                                isDrag = true;
+                            }
+                        }
+
+                        // 设置移动
+                        mLpSmallViewParams.x += dx;
+                        mLpSmallViewParams.y += dy;
+
+                        // 重置坐标
+                        mLastX = mStartX;
+                        mLastY = mStartY;
+
+                        WindowHelper.getInstance().updateView(mSmallAudioView, mLpSmallViewParams);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return isDrag;
+            }
+        });
     }
 
     /**
@@ -492,6 +583,7 @@ public class CloudService extends Service implements View.OnClickListener {
                 if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.AUDIO)) {
                     // 音频通话
                     WindowHelper.getInstance().hideView(mFullAudioView);
+                    WindowHelper.getInstance().hideView(mSmallAudioView);
                 } else if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.VIDEO)) {
                     // 视频通话
                     WindowHelper.getInstance().hideView(mFullVideoView);
@@ -754,6 +846,8 @@ public class CloudService extends Service implements View.OnClickListener {
                 break;
             case R.id.audio_iv_small:
                 //最小化
+                WindowHelper.getInstance().hideView(mFullAudioView);
+                WindowHelper.getInstance().showView(mSmallAudioView, mLpSmallViewParams);
                 break;
             case R.id.video_small_video:
                 // 小窗切换

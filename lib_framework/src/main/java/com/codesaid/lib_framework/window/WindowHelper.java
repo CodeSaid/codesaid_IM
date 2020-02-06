@@ -19,7 +19,7 @@ public class WindowHelper {
     private Context mContext;
 
     private WindowManager windowManager;
-    private WindowManager.LayoutParams mLayoutParams;
+    private WindowManager.LayoutParams lp;
 
     private WindowHelper() {
 
@@ -45,31 +45,46 @@ public class WindowHelper {
         this.mContext = context;
         windowManager = (WindowManager) context
                 .getSystemService(Context.WINDOW_SERVICE);
-        mLayoutParams = new WindowManager.LayoutParams();
+        lp = createLayoutParams(WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+    }
+
+    /**
+     * 创建 WindowManager.LayoutParams
+     *
+     * @param width   宽度
+     * @param height  高度
+     * @param gravity 位置
+     */
+    public WindowManager.LayoutParams createLayoutParams(int width, int height, int gravity) {
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
 
         // 设置宽高
-        mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
-        mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+        layoutParams.width = width;
+        layoutParams.height = height;
 
         // 设置标志位
-        mLayoutParams.flags =
+        layoutParams.flags =
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                         WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                         WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
 
         // 设置格式
-        mLayoutParams.format = PixelFormat.TRANSLUCENT;
+        layoutParams.format = PixelFormat.TRANSLUCENT;
 
         // 设置位置
-        mLayoutParams.gravity = Gravity.CENTER;
+        layoutParams.gravity = gravity;
 
         // 设置类型
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         } else {
-            mLayoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+            layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
         }
+
+        return layoutParams;
     }
 
     /**
@@ -91,7 +106,21 @@ public class WindowHelper {
     public void showView(View view) {
         if (view != null) {
             if (view.getParent() == null) {
-                windowManager.addView(view, mLayoutParams);
+                windowManager.addView(view, lp);
+            }
+        }
+    }
+
+    /**
+     * 自定义 WindowManager.LayoutParams
+     * 显示 View
+     *
+     * @param view view
+     */
+    public void showView(View view, WindowManager.LayoutParams layoutParams) {
+        if (view != null) {
+            if (view.getParent() == null) {
+                windowManager.addView(view, layoutParams);
             }
         }
     }
@@ -106,6 +135,18 @@ public class WindowHelper {
             if (view.getParent() != null) {
                 windowManager.removeView(view);
             }
+        }
+    }
+
+    /**
+     * 更新 View
+     *
+     * @param view         view
+     * @param layoutParams layoutParams
+     */
+    public void updateView(View view, WindowManager.LayoutParams layoutParams) {
+        if (view != null && layoutParams != null) {
+            windowManager.updateViewLayout(view, layoutParams);
         }
     }
 }
