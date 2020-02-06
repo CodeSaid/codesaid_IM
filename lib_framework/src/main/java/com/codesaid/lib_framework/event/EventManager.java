@@ -21,6 +21,9 @@ public class EventManager {
     // 发送位置数据
     public static final int FLAG_SEND_LOCATION = 1003;
 
+    // 发送相机数据
+    public static final int FLAG_SEND_CAMERA = 1004;
+
     /**
      * 注册
      *

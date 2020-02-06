@@ -1,5 +1,7 @@
 package com.codesaid.lib_framework.event;
 
+import android.view.SurfaceView;
+
 /**
  * Created By codesaid
  * On :2020-01-16
@@ -21,6 +23,17 @@ public class MessageEvent {
     private double la;
     private double lo;
     private String address;
+
+    // 相机
+    private SurfaceView surfaceView;
+
+    public SurfaceView getSurfaceView() {
+        return surfaceView;
+    }
+
+    public void setSurfaceView(SurfaceView surfaceView) {
+        this.surfaceView = surfaceView;
+    }
 
     public double getLa() {
         return la;
