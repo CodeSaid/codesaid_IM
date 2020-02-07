@@ -4,8 +4,9 @@
 
     <list>
         <mapping class="com.codesaid.lib_framework.db.NewFriend" />
+        <mapping class="com.codesaid.lib_framework.db.CallRecord" />
     </list>
 
-    <version value="1" />
+    <version value="2" />
 
 </litepal>

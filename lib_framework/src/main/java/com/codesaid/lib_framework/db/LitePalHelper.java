@@ -52,6 +52,22 @@ public class LitePalHelper {
     }
 
     /**
+     * 保存通话记录
+     *
+     * @param userId     用户 id
+     * @param mediaType  媒体类型
+     * @param callStatus 通话状态
+     */
+    public void saveCallRecord(String userId, int mediaType, int callStatus) {
+        CallRecord record = new CallRecord();
+        record.setUserId(userId);
+        record.setMediaType(mediaType);
+        record.setCallStatus(callStatus);
+        record.setCallTime(System.currentTimeMillis());
+        baseSave(record);
+    }
+
+    /**
      * 查询基类
      */
     private List<? extends LitePalSupport> baseQuery(Class classz) {
@@ -63,6 +79,15 @@ public class LitePalHelper {
      */
     public List<NewFriend> queryNewFriend() {
         return (List<NewFriend>) baseQuery(NewFriend.class);
+    }
+
+    /**
+     * 查询通话记录
+     *
+     * @return 通话记录
+     */
+    public List<CallRecord> queryCallRecord() {
+        return (List<CallRecord>) baseQuery(CallRecord.class);
     }
 
     /**
