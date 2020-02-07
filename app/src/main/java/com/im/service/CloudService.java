@@ -24,6 +24,7 @@ import com.codesaid.lib_framework.bean.TextBean;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.cloud.CloudManager;
+import com.codesaid.lib_framework.db.CallRecord;
 import com.codesaid.lib_framework.db.LitePalHelper;
 import com.codesaid.lib_framework.db.NewFriend;
 import com.codesaid.lib_framework.entity.Constants;
@@ -168,6 +169,14 @@ public class CloudService extends Service implements View.OnClickListener {
     private boolean isMove = false;
     // 是否点击
     private boolean isDrag = false;
+
+    // 拨打电话 标记位
+    private int isCallTo = 0;
+    // 接通电话 标记位
+    private int isReceiverTo = 0;
+
+    // 拨打还是接听
+    private boolean isCallOrReceiver = true;
 
     @Nullable
     @Override
@@ -471,6 +480,10 @@ public class CloudService extends Service implements View.OnClickListener {
                     LogUtils.i("视频通话");
                     WindowHelper.getInstance().showView(mFullVideoView);
                 }
+
+                isReceiverTo = 1;
+
+                isCallOrReceiver = false;
             }
 
             /**
@@ -500,6 +513,12 @@ public class CloudService extends Service implements View.OnClickListener {
              */
             @Override
             public void onCallOutgoing(RongCallSession rongCallSession, SurfaceView surfaceView) {
+
+                LogUtils.i("onCallOutgoing");
+
+                isCallOrReceiver = true;
+
+                isCallTo = 1;
 
                 // 目标 id
                 String targetId = rongCallSession.getTargetId();
@@ -538,6 +557,9 @@ public class CloudService extends Service implements View.OnClickListener {
                  * 2. 关闭铃声
                  * 3. 更新按钮状态
                  */
+
+                isCallTo = 2;
+                isReceiverTo = 2;
 
                 // 判断是否在播放铃声
                 if (mAudioCallMedia.isPlaying()) {
@@ -584,10 +606,45 @@ public class CloudService extends Service implements View.OnClickListener {
                     // 音频通话
                     WindowHelper.getInstance().hideView(mFullAudioView);
                     WindowHelper.getInstance().hideView(mSmallAudioView);
+
+                    if (isCallOrReceiver) {
+                        if (isCallTo == 1) {
+                            // 代表只拨打, 没有接听
+                            saveAudioRecord(rongCallSession.getTargetId(), CallRecord.CALL_STATUS_DIAL);
+                        } else if (isCallTo == 2) {
+                            //代表接通
+                            saveAudioRecord(rongCallSession.getTargetId(), CallRecord.CALL_STATUS_ANSWER);
+                        }
+                    } else {
+                        if (isReceiverTo == 1) {
+                            saveAudioRecord(rongCallSession.getCallerUserId(), CallRecord.CALL_STATUS_UN_ANSWER);
+                        } else if (isReceiverTo == 2) {
+                            saveAudioRecord(rongCallSession.getCallerUserId(), CallRecord.CALL_STATUS_ANSWER);
+                        }
+                    }
                 } else if (rongCallSession.getMediaType().equals(RongCallCommon.CallMediaType.VIDEO)) {
                     // 视频通话
                     WindowHelper.getInstance().hideView(mFullVideoView);
+
+                    if (isCallOrReceiver) {
+                        if (isCallTo == 1) {
+                            // 代表只拨打, 没有接听
+                            saveVideoRecord(rongCallSession.getTargetId(), CallRecord.CALL_STATUS_DIAL);
+                        } else if (isCallTo == 2) {
+                            //代表接通
+                            saveVideoRecord(rongCallSession.getTargetId(), CallRecord.CALL_STATUS_ANSWER);
+                        }
+                    } else {
+                        if (isReceiverTo == 1) {
+                            saveVideoRecord(rongCallSession.getCallerUserId(), CallRecord.CALL_STATUS_UN_ANSWER);
+                        } else if (isReceiverTo == 2) {
+                            saveVideoRecord(rongCallSession.getCallerUserId(), CallRecord.CALL_STATUS_ANSWER);
+                        }
+                    }
                 }
+
+                isCallTo = 0;
+                isReceiverTo = 0;
             }
 
             /**
@@ -900,5 +957,27 @@ public class CloudService extends Service implements View.OnClickListener {
                 mRemoteView.setZOrderOnTop(true);
             }
         }
+    }
+
+    /**
+     * 保存音频通话记录
+     *
+     * @param userId     用户 id
+     * @param callStatus 通话状态
+     */
+    private void saveAudioRecord(String userId, int callStatus) {
+        LitePalHelper.getInstance().saveCallRecord(userId,
+                CallRecord.MEDIA_TYPE_AUDIO, callStatus);
+    }
+
+    /**
+     * 保存视频通话记录
+     *
+     * @param userId     用户 id
+     * @param callStatus 通话状态
+     */
+    private void saveVideoRecord(String userId, int callStatus) {
+        LitePalHelper.getInstance().saveCallRecord(userId,
+                CallRecord.MEDIA_TYPE_VIDEO, callStatus);
     }
 }

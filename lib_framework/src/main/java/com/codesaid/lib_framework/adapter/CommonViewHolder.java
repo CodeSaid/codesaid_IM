@@ -123,4 +123,17 @@ public class CommonViewHolder extends RecyclerView.ViewHolder {
         iv.setBackgroundColor(color);
         return this;
     }
+
+    /**
+     * 设置文本颜色
+     *
+     * @param viewId 控件 id
+     * @param color  颜色
+     * @return CommonViewHolder
+     */
+    public CommonViewHolder setTextColor(int viewId, int color) {
+        TextView tv = getView(viewId);
+        tv.setTextColor(color);
+        return this;
+    }
 }
