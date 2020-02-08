@@ -43,8 +43,8 @@ public class BaseActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.CALL_PHONE,
-            Manifest.permission.ACCESS_FINE_LOCATION
-
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.VIBRATE
     };
 
     //保存没有同意的权限

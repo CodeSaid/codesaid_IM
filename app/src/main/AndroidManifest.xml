@@ -110,6 +110,13 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".ui.LocationActivity" />
 
+
+        <!--    二维码扫描    -->
+        <activity
+            android:name=".ui.QrCodeActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <service android:name=".service.CloudService" />
 
         <!--   FileProvider     -->
