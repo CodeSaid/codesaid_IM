@@ -68,6 +68,9 @@ dependencies {
     api this.rootProject.depsLibs.map
     api this.rootProject.depsLibs.location
     api this.rootProject.depsLibs.search
+
+    // zxing
+    api this.rootProject.depsLibs.zxing
     // toast
     implementation this.rootProject.depsLibs.toast
     // Cloud
