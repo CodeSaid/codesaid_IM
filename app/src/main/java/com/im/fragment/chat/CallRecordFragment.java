@@ -167,7 +167,7 @@ public class CallRecordFragment extends BaseFragment implements SwipeRefreshLayo
                     public void accept(List<CallRecord> callRecords) throws Exception {
                         mChatRecordRefreshLayout.setRefreshing(false);
 
-                        if (callRecords != null) {
+                        if (callRecords != null && callRecords.size() > 0) {
                             if (mList.size() > 0) {
                                 mList.clear();
                             }

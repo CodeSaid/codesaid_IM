@@ -9,12 +9,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.codesaid.lib_framework.adapter.CloudTagAdapter;
 import com.codesaid.lib_framework.base.BaseFragment;
+import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.toast.ToastUtils;
 import com.im.R;
 import com.im.ui.AddFriendActivity;
+import com.im.ui.QrCodeActivity;
 import com.moxun.tagcloudlib.view.TagCloudView;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +30,9 @@ import java.util.List;
  * Package Name: com.im.fragment
  */
 public class StarFragment extends BaseFragment implements View.OnClickListener {
+
+    //二维码结果
+    private static final int REQUEST_CODE = 1235;
 
     private TextView tv_star_title;
     private ImageView iv_camera;
@@ -95,6 +103,37 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
                 // 添加好友
                 startActivity(new Intent(getActivity(), AddFriendActivity.class));
                 break;
+            case R.id.iv_camera:
+                //扫描
+                Intent intent = new Intent(getActivity(), QrCodeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+                break;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        /**
+         * 处理二维码扫描结果
+         */
+        if (requestCode == REQUEST_CODE) {
+            //处理扫描结果（在界面上显示）
+            if (null != data) {
+                Bundle bundle = data.getExtras();
+                if (bundle == null) {
+                    return;
+                }
+                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = bundle.getString(CodeUtils.RESULT_STRING);
+                    LogUtils.i("qrcode result: " + result);
+                    //解析结果
+                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                    //解析二维码失败
+                    ToastUtils.show(getActivity(), getString(R.string.text_qrcode_fail));
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
