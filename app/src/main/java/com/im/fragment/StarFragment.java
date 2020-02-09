@@ -2,6 +2,7 @@ package com.im.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.codesaid.lib_framework.utils.toast.ToastUtils;
 import com.im.R;
 import com.im.ui.AddFriendActivity;
 import com.im.ui.QrCodeActivity;
+import com.im.ui.UserInfoActivity;
 import com.moxun.tagcloudlib.view.TagCloudView;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -124,9 +126,20 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
                     return;
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    //解析结果
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
                     LogUtils.i("qrcode result: " + result);
-                    //解析结果
+
+                    if (!TextUtils.isEmpty(result)) {
+                        // 判断是否是 我们自己的二维码
+                        if (result.startsWith("codesaid_IM")) {
+                            String s = result.split("#")[1];
+
+                            UserInfoActivity.startActivity(getActivity(), s);
+                        } else {
+                            ToastUtils.show(getActivity(), "请使用正确的二维码");
+                        }
+                    }
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                     //解析二维码失败
                     ToastUtils.show(getActivity(), getString(R.string.text_qrcode_fail));
