@@ -14,6 +14,7 @@ import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.helper.GlideHelper;
 import com.im.R;
 import com.im.ui.NewFriendActivity;
+import com.im.ui.ShareImageActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -82,6 +83,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             case R.id.ll_new_friend:
                 //新朋友
                 startActivity(new Intent(getActivity(), NewFriendActivity.class));
+                break;
+            case R.id.ll_share: // 分享
+                startActivity(new Intent(getActivity(), ShareImageActivity.class));
                 break;
         }
     }
