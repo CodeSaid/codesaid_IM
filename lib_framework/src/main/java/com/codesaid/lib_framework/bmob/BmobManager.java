@@ -188,6 +188,16 @@ public class BmobManager {
     }
 
     /**
+     * 查询 私有库
+     *
+     * @param listener listener
+     */
+    public void queryPrivateSet(FindListener<PrivateSet> listener) {
+        BmobQuery<PrivateSet> query = new BmobQuery<>();
+        query.findObjects(listener);
+    }
+
+    /**
      * 添加好友
      *
      * @param user     user
@@ -217,6 +227,25 @@ public class BmobManager {
                 }
             }
         });
+    }
+
+    /**
+     * 添加 私有库
+     *
+     * @param listener listener
+     */
+    public void addPrivateSet(SaveListener<String> listener) {
+        PrivateSet set = new PrivateSet();
+        set.setUserId(getUser().getObjectId());
+        set.setPhone(getUser().getMobilePhoneNumber());
+        set.save(listener);
+    }
+
+    public void deletePrivateSet(String userId, UpdateListener listener) {
+        PrivateSet set = new PrivateSet();
+        set.setObjectId(userId);
+
+        set.delete(listener);
     }
 
     public interface onUploadPhotoListener {
