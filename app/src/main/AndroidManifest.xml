@@ -117,6 +117,7 @@
             android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".ui.ShareImageActivity" />
+        <activity android:name=".ui.PrivateSettingActivity" />
 
         <service android:name=".service.CloudService" />
 
