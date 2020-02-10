@@ -88,7 +88,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
     protected void onResume() {
         super.onResume();
 
-        loadContact();
+        loadUser();
     }
 
     /**
@@ -103,9 +103,18 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
          * 4.去显示
          */
 
+        mRefreshLayout.setRefreshing(true);
+
+        if (mList.size() > 0) {
+            mList.clear();
+        }
+
         mDisposable = Observable.create(new ObservableOnSubscribe<List<PrivateSet>>() {
             @Override
             public void subscribe(final ObservableEmitter<List<PrivateSet>> emitter) throws Exception {
+
+                loadContact();
+
                 BmobManager.getInstance().queryPrivateSet(new FindListener<PrivateSet>() {
                     @Override
                     public void done(List<PrivateSet> list, BmobException e) {
@@ -139,6 +148,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
         }
 
         if (mContactMap.size() > 0) {
+            mRefreshLayout.setRefreshing(false);
             for (final Map.Entry<String, String> entry : mContactMap.entrySet()) {
 
                 // 过滤 联系人
@@ -152,10 +162,10 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
                     public void done(List<IMUser> list, BmobException e) {
                         if (e == null) {
                             if (list != null && list.size() > 0) {
-                                IMUser user = list.get(0);
-
                                 item_empty_view.setVisibility(View.GONE);
                                 mContactView.setVisibility(View.VISIBLE);
+
+                                IMUser user = list.get(0);
                                 addContent(user, entry.getKey(), entry.getValue());
                             } else {
                                 item_empty_view.setVisibility(View.VISIBLE);
@@ -166,6 +176,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
                 });
             }
         } else {
+            mRefreshLayout.setRefreshing(false);
             item_empty_view.setVisibility(View.VISIBLE);
             mContactView.setVisibility(View.GONE);
         }
@@ -175,16 +186,17 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
      * 加载联系人
      */
     private void loadContact() {
-
-        mRefreshLayout.setRefreshing(true);
-
         Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI
                 , null, null, null, null);
         String name;
         String phone;
         // 判断是否有联系人
         if (cursor != null) {
-            mRefreshLayout.setRefreshing(false);
+
+            if (mContactMap.size() > 0) {
+                mContactMap.clear();
+            }
+
             while (cursor.moveToNext()) {
                 name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -200,10 +212,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
         } else {
             item_empty_view.setVisibility(View.VISIBLE);
             mContactView.setVisibility(View.GONE);
-            mRefreshLayout.setRefreshing(false);
         }
-
-        loadUser();
     }
 
     /**
@@ -241,7 +250,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
     @Override
     public void onRefresh() {
         if (mRefreshLayout.isRefreshing()) {
-            loadContact();
+            loadUser();
         }
     }
 }
