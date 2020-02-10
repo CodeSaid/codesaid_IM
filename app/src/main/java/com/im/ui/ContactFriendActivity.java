@@ -3,11 +3,13 @@ package com.im.ui;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.codesaid.lib_framework.base.BaseBackActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
@@ -40,8 +42,10 @@ import io.reactivex.schedulers.Schedulers;
  * Package Name: com.im.ui
  * desc : 从通讯录导入好友
  */
-public class ContactFriendActivity extends BaseBackActivity {
+public class ContactFriendActivity extends BaseBackActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+    private View item_empty_view;
+    private SwipeRefreshLayout mRefreshLayout;
     private RecyclerView mContactView;
     private Map<String, String> mContactMap = new HashMap<>();
 
@@ -58,7 +62,12 @@ public class ContactFriendActivity extends BaseBackActivity {
     }
 
     private void initView() {
+
+        mRefreshLayout = findViewById(R.id.mRefreshLayout);
+        // 设置刷新
+        mRefreshLayout.setOnRefreshListener(this);
         mContactView = findViewById(R.id.mContactView);
+        item_empty_view = findViewById(R.id.item_empty_view);
         mContactView.setLayoutManager(new LinearLayoutManager(this));
         mContactView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
@@ -73,10 +82,13 @@ public class ContactFriendActivity extends BaseBackActivity {
                         mList.get(position).getUserId());
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         loadContact();
-
-        loadUser();
     }
 
     /**
@@ -139,15 +151,23 @@ public class ContactFriendActivity extends BaseBackActivity {
                     @Override
                     public void done(List<IMUser> list, BmobException e) {
                         if (e == null) {
-                            if (!list.isEmpty()) {
+                            if (list != null && list.size() > 0) {
                                 IMUser user = list.get(0);
 
+                                item_empty_view.setVisibility(View.GONE);
+                                mContactView.setVisibility(View.VISIBLE);
                                 addContent(user, entry.getKey(), entry.getValue());
+                            } else {
+                                item_empty_view.setVisibility(View.VISIBLE);
+                                mContactView.setVisibility(View.GONE);
                             }
                         }
                     }
                 });
             }
+        } else {
+            item_empty_view.setVisibility(View.VISIBLE);
+            mContactView.setVisibility(View.GONE);
         }
     }
 
@@ -155,12 +175,16 @@ public class ContactFriendActivity extends BaseBackActivity {
      * 加载联系人
      */
     private void loadContact() {
+
+        mRefreshLayout.setRefreshing(true);
+
         Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI
                 , null, null, null, null);
         String name;
         String phone;
         // 判断是否有联系人
         if (cursor != null) {
+            mRefreshLayout.setRefreshing(false);
             while (cursor.moveToNext()) {
                 name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 phone = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
@@ -173,7 +197,13 @@ public class ContactFriendActivity extends BaseBackActivity {
             }
             // 释放
             cursor.close();
+        } else {
+            item_empty_view.setVisibility(View.VISIBLE);
+            mContactView.setVisibility(View.GONE);
+            mRefreshLayout.setRefreshing(false);
         }
+
+        loadUser();
     }
 
     /**
@@ -205,6 +235,13 @@ public class ContactFriendActivity extends BaseBackActivity {
         super.onDestroy();
         if (mDisposable.isDisposed()) {
             mDisposable.dispose();
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        if (mRefreshLayout.isRefreshing()) {
+            loadContact();
         }
     }
 }
