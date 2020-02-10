@@ -11,9 +11,11 @@ import android.widget.TextView;
 import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
+import com.codesaid.lib_framework.bmob.PrivateSet;
 import com.codesaid.lib_framework.helper.GlideHelper;
 import com.im.R;
 import com.im.ui.NewFriendActivity;
+import com.im.ui.PrivateSettingActivity;
 import com.im.ui.ShareImageActivity;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -86,6 +88,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.ll_share: // 分享
                 startActivity(new Intent(getActivity(), ShareImageActivity.class));
+                break;
+            case R.id.ll_private_set:
+                startActivity(new Intent(getActivity(), PrivateSettingActivity.class));
                 break;
         }
     }
