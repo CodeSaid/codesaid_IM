@@ -1,16 +1,19 @@
-package com.codesaid.lib_framework.adapter;
+package com.im.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codesaid.lib_framework.R;
+import com.codesaid.lib_framework.helper.GlideHelper;
+import com.im.model.StarModel;
 import com.moxun.tagcloudlib.view.TagsAdapter;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created By codesaid
@@ -21,10 +24,10 @@ import java.util.List;
 public class CloudTagAdapter extends TagsAdapter {
 
     private Context mContext;
-    private List<String> mList;
+    private List<StarModel> mList;
     private LayoutInflater mInflater;
 
-    public CloudTagAdapter(Context context, List<String> list) {
+    public CloudTagAdapter(Context context, List<StarModel> list) {
         mContext = context;
         mList = list;
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -39,18 +42,13 @@ public class CloudTagAdapter extends TagsAdapter {
     public View getView(Context context, int position, ViewGroup parent) {
         View view = mInflater.inflate(R.layout.layout_star_view_item, null);
         //初始化控件
-        ImageView iv_star_icon = view.findViewById(R.id.iv_star_icon);
+        CircleImageView iv_star_icon = view.findViewById(R.id.iv_star_icon);
         TextView tv_star_name = view.findViewById(R.id.tv_star_name);
 
-        tv_star_name.setText(mList.get(position));
-        switch (position % 10) {
-            case 0:
-                iv_star_icon.setImageResource(R.drawable.icon_message);
-                break;
-            default:
-                iv_star_icon.setImageResource(R.drawable.icon_message);
-                break;
-        }
+        StarModel starModel = mList.get(position);
+
+        tv_star_name.setText(starModel.getNickName());
+        GlideHelper.loadUrl(mContext, starModel.getPhotoUrl(), iv_star_icon);
 
         return view;
     }
