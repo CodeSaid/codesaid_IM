@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.codesaid.lib_framework.view.DialogManager;
+import com.codesaid.lib_framework.helper.PairFriendHelper;
 import com.codesaid.lib_framework.view.LoadingView;
 import com.im.adapter.CloudTagAdapter;
 import com.codesaid.lib_framework.base.BaseFragment;
@@ -60,6 +60,7 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
     private CloudTagAdapter mTagAdapter;
 
     private LoadingView mLoadingView;
+    private List<IMUser> mAllUserList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -100,11 +101,29 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
             public void onItemClick(ViewGroup parent, View view, int position) {
                 //ToastUtils.show(getActivity(), "position: " + position);
                 // 跳转到 用户 信息 页面
-                UserInfoActivity.startActivity(getActivity(), mList.get(position).getUserId());
+                startUserInfo(mList.get(position).getUserId());
+            }
+        });
+
+        // 监听匹配回调
+        PairFriendHelper.getInstance().setOnPairResultListener(new PairFriendHelper.onPairResultListener() {
+            @Override
+            public void onRandomPairListener(String userId) {
+                mLoadingView.hide();
+                startUserInfo(userId);
             }
         });
 
         loadStarUser();
+    }
+
+    /**
+     * 跳转到用户信息页面
+     *
+     * @param userId 用户 id
+     */
+    private void startUserInfo(String userId) {
+        UserInfoActivity.startActivity(getActivity(), userId);
     }
 
     /**
@@ -116,6 +135,16 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
             public void done(List<IMUser> list, BmobException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
+
+                        if (mAllUserList.size() > 0) {
+                            mAllUserList.clear();
+                        }
+
+                        if (mList.size() > 0) {
+                            mList.clear();
+                        }
+
+                        mAllUserList = list;
 
                         int index = 100;
 
@@ -190,7 +219,7 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
      *              2:缘分匹配
      *              3:恋爱匹配
      */
-    private void pairUser(int index) {
+    private void pairUser(final int index) {
         switch (index) {
             case 0:
                 mLoadingView.show(getString(R.string.text_pair_random));
@@ -207,6 +236,20 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
         }
 
         //计算
+        if (mAllUserList != null && mAllUserList.size() > 0) {
+            PairFriendHelper.getInstance().pairUser(index, mAllUserList);
+        } else {
+            BmobManager.getInstance().queryAllUser(new FindListener<IMUser>() {
+                @Override
+                public void done(List<IMUser> list, BmobException e) {
+                    if (e == null) {
+                        if (list != null && list.size() > 0) {
+                            PairFriendHelper.getInstance().pairUser(index, list);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -244,5 +287,11 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        PairFriendHelper.getInstance().disposable();
     }
 }
