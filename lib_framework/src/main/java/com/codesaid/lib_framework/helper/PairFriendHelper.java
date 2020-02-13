@@ -2,8 +2,12 @@ package com.codesaid.lib_framework.helper;
 
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
+import com.codesaid.lib_framework.utils.log.LogUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +34,11 @@ public class PairFriendHelper {
     private Random random;
     private Disposable mDisposable;
 
+    private IMUser myUser;
+
     private PairFriendHelper() {
         random = new Random();
+        myUser = BmobManager.getInstance().getUser();
     }
 
     public static PairFriendHelper getInstance() {
@@ -61,12 +68,105 @@ public class PairFriendHelper {
                 randomUser(list);
                 break;
             case 1:
+                soulUser(list);
                 break;
             case 2:
                 break;
             case 3:
                 break;
         }
+    }
+
+    /**
+     * 灵魂匹配
+     */
+    @SuppressWarnings("ConstantConditions")
+    private void soulUser(List<IMUser> list) {
+        Map<String, Integer> soulMap = new HashMap<>();
+        // 四要素：星座 年龄 爱好 状态
+        for (int i = 0; i < list.size(); i++) {
+
+            IMUser user = list.get(i);
+
+            //过滤自己
+            if (list.get(i).getObjectId().equals(BmobManager.getInstance().getUser().getObjectId())) {
+                // 跳过本次循环
+                continue;
+            }
+
+            //匹配星座
+            if (user.getConstellation().equals(myUser.getConstellation())) {
+                soulMap.put(user.getObjectId(), 1);
+            }
+
+            //匹配年龄
+            if (user.getAge() == myUser.getAge()) {
+                if (soulMap.containsKey(user.getObjectId())) {
+                    soulMap.put(user.getObjectId(), soulMap.get(user.getObjectId()) + 1);
+                } else {
+                    soulMap.put(user.getObjectId(), 1);
+                }
+            }
+
+            //匹配爱好
+            if (user.getHobby().equals(myUser.getHobby())) {
+                if (soulMap.containsKey(user.getObjectId())) {
+                    soulMap.put(user.getObjectId(), soulMap.get(user.getObjectId()) + 1);
+                } else {
+                    soulMap.put(user.getObjectId(), 1);
+                }
+            }
+
+            //单身状态
+            if (soulMap.containsKey(user.getObjectId())) {
+                if (soulMap.get(user.getObjectId()) != null) {
+                    soulMap.put(user.getObjectId(), soulMap.get(user.getObjectId()) + 1);
+                } else {
+                    soulMap.put(user.getObjectId(), 1);
+                }
+            }
+        }
+
+        LogUtils.i("soulMap: " + soulMap.toString());
+
+        final List<String> resultList = mapComperTo(soulMap, 4);
+
+        if (resultList != null && resultList.size() > 0) {
+            mDisposable = Observable.timer(DELAY_TIME, TimeUnit.SECONDS)
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Long>() {
+                        @Override
+                        public void accept(Long aLong) throws Exception {
+                            // 随机数
+                            int r = random.nextInt(resultList.size());
+                            String userId = resultList.get(r);
+                            if (mOnPairResultListener != null) {
+                                mOnPairResultListener.onRandomPairListener(userId);
+                            }
+                        }
+                    });
+        }
+    }
+
+    private List<String> mapComperTo(Map<String, Integer> map, int size) {
+        List<String> resultList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            String key = entry.getKey();
+            int value = entry.getValue();
+            if (size == value) {
+                resultList.add(key);
+            }
+        }
+
+        if (resultList.size() == 0) {
+            size--;
+            if (size == 0) {
+                return null;
+            }
+            mapComperTo(map, size);
+        }
+        return resultList;
     }
 
     /**
