@@ -112,6 +112,12 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
                 mLoadingView.hide();
                 startUserInfo(userId);
             }
+
+            @Override
+            public void OnPairFailListener() {
+                mLoadingView.hide();
+                ToastUtils.show(getActivity(), getString(R.string.text_pair_null));
+            }
         });
 
         loadStarUser();

@@ -129,26 +129,34 @@ public class PairFriendHelper {
 
         LogUtils.i("soulMap: " + soulMap.toString());
 
+        // 获取最佳的对象
         final List<String> resultList = mapComperTo(soulMap, 4);
 
         if (resultList != null && resultList.size() > 0) {
-            mDisposable = Observable.timer(DELAY_TIME, TimeUnit.SECONDS)
-                    .subscribeOn(AndroidSchedulers.mainThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<Long>() {
-                        @Override
-                        public void accept(Long aLong) throws Exception {
-                            // 随机数
-                            int r = random.nextInt(resultList.size());
-                            String userId = resultList.get(r);
-                            if (mOnPairResultListener != null) {
-                                mOnPairResultListener.onRandomPairListener(userId);
-                            }
-                        }
-                    });
+
+            rxJavaPairUser(new onRxJavaPairUserListener() {
+                @Override
+                public void rxJavaResult() {
+                    // 随机数
+                    int r = random.nextInt(resultList.size());
+                    String userId = resultList.get(r);
+                    if (mOnPairResultListener != null) {
+                        mOnPairResultListener.onRandomPairListener(userId);
+                    }
+                }
+            });
+        } else {
+            mOnPairResultListener.OnPairFailListener();
         }
     }
 
+    /**
+     * 比较 集合中的对象，获取最佳的对象
+     *
+     * @param map  map
+     * @param size size
+     * @return list
+     */
     private List<String> mapComperTo(Map<String, Integer> map, int size) {
         List<String> resultList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
@@ -188,26 +196,49 @@ public class PairFriendHelper {
             }
         }
 
+        rxJavaPairUser(new onRxJavaPairUserListener() {
+            @Override
+            public void rxJavaResult() {
+                // 随机数
+                int r = random.nextInt(list.size());
+                IMUser user = list.get(r);
+                if (user != null) {
+                    if (mOnPairResultListener != null) {
+                        mOnPairResultListener.onRandomPairListener(user.getObjectId());
+                    }
+                }
+            }
+        });
+    }
+
+    private void rxJavaPairUser(final onRxJavaPairUserListener listener) {
         mDisposable = Observable.timer(DELAY_TIME, TimeUnit.SECONDS)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Long>() {
                     @Override
                     public void accept(Long aLong) throws Exception {
-                        // 随机数
-                        int r = random.nextInt(list.size());
-                        IMUser user = list.get(r);
-                        if (user != null) {
-                            if (mOnPairResultListener != null) {
-                                mOnPairResultListener.onRandomPairListener(user.getObjectId());
-                            }
-                        }
+                        listener.rxJavaResult();
                     }
                 });
     }
 
+    public interface onRxJavaPairUserListener {
+        void rxJavaResult();
+    }
+
     public interface onPairResultListener {
+        /**
+         * 匹配成功
+         *
+         * @param userId 用户 id
+         */
         void onRandomPairListener(String userId);
+
+        /**
+         * 匹配失败
+         */
+        void OnPairFailListener();
     }
 
     /**
