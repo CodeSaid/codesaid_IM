@@ -198,6 +198,16 @@ public class BmobManager {
     }
 
     /**
+     * 查询 缘分池
+     *
+     * @param listener listener
+     */
+    public void queryFateSet(FindListener<FateUser> listener) {
+        BmobQuery<FateUser> query = new BmobQuery<>();
+        query.findObjects(listener);
+    }
+
+    /**
      * 添加好友
      *
      * @param user     user
@@ -246,6 +256,29 @@ public class BmobManager {
         set.setObjectId(userId);
 
         set.delete(listener);
+    }
+
+    /**
+     * 添加 自己到 缘分池中
+     *
+     * @param listener listener
+     */
+    public void addFateUser(SaveListener<String> listener) {
+        FateUser user = new FateUser();
+        user.setUserId(getUser().getObjectId());
+        user.save(listener);
+    }
+
+    /**
+     * 从 缘分池 中 删除 用户
+     *
+     * @param userId   需要删除的用户 id
+     * @param listener listener
+     */
+    public void deleteFateUser(String userId, UpdateListener listener) {
+        FateUser user = new FateUser();
+        user.setUserId(userId);
+        user.delete(listener);
     }
 
     public interface onUploadPhotoListener {
