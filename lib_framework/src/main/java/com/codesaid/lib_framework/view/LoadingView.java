@@ -65,4 +65,14 @@ public class LoadingView {
         mAnimator.pause();
         DialogManager.getInstance().hide(mLoadingView);
     }
+
+    /**
+     * 设置外部是否可以点击
+     *
+     * @param flag true or false
+     */
+    public void setCancelable(boolean flag) {
+        mLoadingView.setCancelable(flag);
+
+    }
 }
