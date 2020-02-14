@@ -73,6 +73,7 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
 
     private void initView(View view) {
         mLoadingView = new LoadingView(getActivity());
+        mLoadingView.setCancelable(false);
 
         ll_random = view.findViewById(R.id.ll_random);
         ll_soul = view.findViewById(R.id.ll_soul);
@@ -208,11 +209,11 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.ll_fate:
                 //缘分匹配
-
+                pairUser(2);
                 break;
             case R.id.ll_love:
                 //恋爱匹配
-
+                pairUser(3);
                 break;
         }
     }

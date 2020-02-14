@@ -1,6 +1,7 @@
 package com.codesaid.lib_framework.helper;
 
 import com.codesaid.lib_framework.bmob.BmobManager;
+import com.codesaid.lib_framework.bmob.FateUser;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 
@@ -11,6 +12,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -29,6 +34,9 @@ public class PairFriendHelper {
     private static final int DELAY_TIME = 2;
 
     private onPairResultListener mOnPairResultListener;
+
+    // 缘分池 查询 轮询 次数
+    private int fateNum = 0;
 
     // 随机类
     private Random random;
@@ -71,10 +79,102 @@ public class PairFriendHelper {
                 soulUser(list);
                 break;
             case 2:
+                fateUser();
                 break;
             case 3:
                 break;
         }
+    }
+
+    /**
+     * 缘分匹配
+     */
+    private void fateUser() {
+        /**
+         * 1.创建库
+         * 2.将自己添加进去
+         * 3.轮询查找好友
+         * 4.15s
+         * 5.查询到了之后则反馈给外部
+         * 6.将自己删除
+         */
+
+        BmobManager.getInstance().addFateUser(new SaveListener<String>() {
+            @Override
+            public void done(final String s, BmobException e) {
+                if (e == null) {
+                    mDisposable = Observable.interval(1, TimeUnit.SECONDS)
+                            .subscribe(new Consumer<Long>() {
+                                @Override
+                                public void accept(Long aLong) throws Exception {
+                                    queryFateSet(s);
+                                }
+                            });
+                }
+            }
+        });
+    }
+
+    /**
+     * 根据 用户 id 查询 缘分池
+     *
+     * @param userId user id
+     */
+    private void queryFateSet(final String userId) {
+        BmobManager.getInstance().queryFateSet(new FindListener<FateUser>() {
+            @Override
+            public void done(List<FateUser> list, BmobException e) {
+                fateNum++;
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        if (list.size() > 1) {// 说明有人在匹配
+                            disposable();
+                            // 过滤自己
+                            for (int i = 0; i < list.size(); i++) {
+                                FateUser fateUser = list.get(i);
+                                if (fateUser.getUserId().equals(myUser.getObjectId())) {
+                                    list.remove(i);
+                                    break;
+                                }
+
+                                // 最终的结果 抛出
+                                int r = random.nextInt(list.size());
+                                mOnPairResultListener.onRandomPairListener(list.get(r).getUserId());
+
+                                // 删除 自己
+                                deleteFateUser(userId);
+                                fateNum = 0;
+                            }
+                        } else {
+                            LogUtils.i("fateNum: " + fateNum);
+                            if (fateNum > -15) {
+                                disposable();
+                                // 超时
+                                deleteFateUser(userId);
+                                mOnPairResultListener.OnPairFailListener();
+                                fateNum = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 根据 id 从 缘分池 中删除 用户
+     *
+     * @param userId user id
+     */
+    private void deleteFateUser(String userId) {
+        BmobManager.getInstance().deleteFateUser(userId, new UpdateListener() {
+            @Override
+            public void done(BmobException e) {
+                if (e == null) {
+                    LogUtils.i("delete FateUser success");
+                }
+            }
+        });
     }
 
     /**
@@ -246,9 +346,7 @@ public class PairFriendHelper {
      */
     public void disposable() {
         if (mDisposable != null) {
-            if (mDisposable.isDisposed()) {
-                mDisposable.dispose();
-            }
+            mDisposable.dispose();
         }
     }
 }
