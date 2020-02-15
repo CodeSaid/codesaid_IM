@@ -277,7 +277,7 @@ public class BmobManager {
      */
     public void deleteFateUser(String userId, UpdateListener listener) {
         FateUser user = new FateUser();
-        user.setUserId(userId);
+        user.setObjectId(userId);
         user.delete(listener);
     }
 
