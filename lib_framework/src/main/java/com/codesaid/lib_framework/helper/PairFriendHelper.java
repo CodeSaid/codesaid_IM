@@ -82,7 +82,66 @@ public class PairFriendHelper {
                 fateUser();
                 break;
             case 3:
+                loveUser(list);
                 break;
+        }
+    }
+
+    /**
+     * 恋爱匹配
+     *
+     * @param list list
+     */
+    private void loveUser(List<IMUser> list) {
+        /**
+         * 1.抽取所有的用户
+         * 2.根据性别抽取出异性
+         * 3.根据年龄再抽取
+         * 4.可以有一些附加条件：爱好 星座 ~~
+         * 5.计算出来
+         */
+
+        List<IMUser> loveLists = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            // 过滤自己
+            if (myUser.getObjectId().equals(list.get(i).getObjectId())) {
+                //跳过本次循环
+                continue;
+            }
+
+            // 判断是否是异性
+            if (myUser.isSex() != list.get(i).isSex()) {
+                loveLists.add(list.get(i));
+            }
+
+        }
+
+        // 判断是否有数据
+        if (loveLists.size() > 0) {
+            final List<String> loveIdLists = new ArrayList<>();
+            for (int j = 0; j < loveLists.size(); j++) {
+                // 计算 年龄是否相差 5岁内
+                IMUser user = loveLists.get(j);
+                if (Math.abs(user.getAge() - myUser.getAge()) <= 5) {
+                    loveIdLists.add(user.getObjectId());
+                }
+            }
+
+            if (loveIdLists.size() > 0) {
+                //在这里增加更多的判断条件
+                rxJavaPairUser(new onRxJavaPairUserListener() {
+                    @Override
+                    public void rxJavaResult() {
+                        int r = random.nextInt(loveIdLists.size());
+                        mOnPairResultListener.onRandomPairListener(loveIdLists.get(r));
+                    }
+                });
+            } else {
+                mOnPairResultListener.OnPairFailListener();
+            }
+        } else {
+            mOnPairResultListener.OnPairFailListener();
         }
     }
 
@@ -189,7 +248,7 @@ public class PairFriendHelper {
             IMUser user = list.get(i);
 
             //过滤自己
-            if (list.get(i).getObjectId().equals(BmobManager.getInstance().getUser().getObjectId())) {
+            if (list.get(i).getObjectId().equals(myUser.getObjectId())) {
                 // 跳过本次循环
                 continue;
             }
@@ -290,7 +349,7 @@ public class PairFriendHelper {
          */
         for (int i = 0; i < list.size(); i++) {
             //过滤自己
-            if (list.get(i).getObjectId().equals(BmobManager.getInstance().getUser().getObjectId())) {
+            if (list.get(i).getObjectId().equals(myUser.getObjectId())) {
                 list.remove(i);
                 break;
             }
