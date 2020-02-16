@@ -38,6 +38,11 @@ public class FileHelper {
     // 相册
     public static final int ALBUM_CODE = 1009;
 
+    //音乐
+    public static final int MUSIC_REQUEST_CODE = 1006;
+    //视频
+    public static final int VIDEO_REQUEST_CODE = 1007;
+
     public File getTempFile() {
         return tempFile;
     }
@@ -93,6 +98,28 @@ public class FileHelper {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         activity.startActivityForResult(intent, ALBUM_CODE);
+    }
+
+    /**
+     * 跳转到音乐
+     *
+     * @param activity activity
+     */
+    public void toMusic(Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("audio/*");
+        activity.startActivityForResult(intent, MUSIC_REQUEST_CODE);
+    }
+
+    /**
+     * 跳转到视频
+     *
+     * @param activity activity
+     */
+    public void toVideo(Activity activity) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("video/*");
+        activity.startActivityForResult(intent, VIDEO_REQUEST_CODE);
     }
 
     /**
