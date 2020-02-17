@@ -208,6 +208,16 @@ public class BmobManager {
     }
 
     /**
+     * 查询 圈子
+     *
+     * @param listener listener
+     */
+    public void querySquareSet(FindListener<SquareSet> listener) {
+        BmobQuery<SquareSet> query = new BmobQuery<>();
+        query.findObjects(listener);
+    }
+
+    /**
      * 添加好友
      *
      * @param user     user
@@ -279,6 +289,23 @@ public class BmobManager {
         FateUser user = new FateUser();
         user.setObjectId(userId);
         user.delete(listener);
+    }
+
+    /**
+     * 发布广场
+     *
+     * @param mediaType 媒体类型
+     * @param text      文本
+     * @param path      路径
+     */
+    public void pushSquare(int mediaType, String text, String path, SaveListener<String> listener) {
+        SquareSet squareSet = new SquareSet();
+        squareSet.setPush_type(mediaType);
+        squareSet.setUserId(getUser().getObjectId());
+        squareSet.setPushTime(System.currentTimeMillis());
+        squareSet.setText(text);
+        squareSet.setMediaUrl(path);
+        squareSet.save(listener);
     }
 
     public interface onUploadPhotoListener {
