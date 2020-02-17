@@ -119,6 +119,12 @@
         <activity android:name=".ui.ShareImageActivity" />
         <activity android:name=".ui.PrivateSettingActivity" />
 
+        <!--   圈子     -->
+        <activity
+            android:name=".ui.PushSquareActivity"
+            android:label="@string/text_square_psuh"
+            android:launchMode="singleTask" />
+
         <service android:name=".service.CloudService" />
 
         <!--   FileProvider     -->
