@@ -2,6 +2,7 @@ package com.im.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.bmob.SquareSet;
+import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
 import com.im.R;
 import com.im.ui.ImagePreviewActivity;
 import com.im.ui.PushSquareActivity;
@@ -33,6 +35,7 @@ import java.util.Locale;
 
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
+import cn.jzvd.Jzvd;
 
 /**
  * Created By codesaid
@@ -59,6 +62,11 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
 
     private SimpleDateFormat dateFormat;
 
+    //播放
+    private MediaPlayerManager mMusicManager;
+    //音乐是否在播放
+    private boolean isMusicPlay = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_square, null);
@@ -68,6 +76,13 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
 
     private void initView(View view) {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+        mMusicManager = new MediaPlayerManager();
+        mMusicManager.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                isMusicPlay = false;
+            }
+        });
 
         iv_push = view.findViewById(R.id.iv_push);
         mSquareView = view.findViewById(R.id.mSquareView);
@@ -103,13 +118,19 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
                 });
                 // 设置时间
                 holder.setText(R.id.tv_time, dateFormat.format(model.getPushTime()));
+                // 设置文本
                 if (!TextUtils.isEmpty(model.getText())) {
                     holder.setText(R.id.tv_text, model.getText());
+                } else {
+                    holder.getView(R.id.tv_text).setVisibility(View.GONE);
                 }
                 // 多媒体
                 switch (model.getPush_type()) {
+                    case SquareSet.PUSH_TEXT:
+                        goneItemView(holder, false, false, false);
+                        break;
                     case SquareSet.PUSH_IMAGE: // 图片
-                        holder.getView(R.id.iv_img).setVisibility(View.VISIBLE);
+                        goneItemView(holder, true, false, false);
                         holder.setImgUrl(getActivity(), R.id.iv_img, model.getMediaUrl());
                         holder.getView(R.id.iv_img).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -119,10 +140,51 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
                         });
                         break;
                     case SquareSet.PUSH_MUSIC:
+                        goneItemView(holder, false, true, false);
 
+                        holder.getView(R.id.ll_music).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                // 播放音乐
+                                if (mMusicManager.isPlaying()) { // 判断是否正在播放
+                                    mMusicManager.pausePlay();
+                                } else {
+                                    if (isMusicPlay) {
+                                        mMusicManager.continuePlay();
+                                    } else {
+                                        mMusicManager.startPlay(model.getMediaUrl());
+                                        isMusicPlay = true;
+                                    }
+                                }
+                            }
+                        });
                         break;
                     case SquareSet.PUSH_VIDEO:
-                        break;
+//                        goneItemView(holder, false, false, true);
+//                        holder.getView(R.id.tv_text).setVisibility(View.GONE);
+//
+//                        // 视频 播放
+//                        VideoJzvdStd videoJzvdStd = holder.getView(R.id.jz_video);
+//                        videoJzvdStd.setUp(model.getMediaUrl(), model.getText());
+//
+//                        Observable.create(new ObservableOnSubscribe<Bitmap>() {
+//                            @Override
+//                            public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
+//                                Bitmap mBitmap = FileHelper.getInstance()
+//                                        .getNetVideoBitmap(model.getMediaUrl());
+//                                if (mBitmap != null) {
+//                                    emitter.onNext(mBitmap);
+//                                    emitter.onComplete();
+//                                }
+//                            }
+//                        }).subscribeOn(Schedulers.newThread())
+//                                .observeOn(AndroidSchedulers.mainThread())
+//                                .subscribe(bitmap -> {
+//                                    if (bitmap != null) {
+//                                        videoJzvdStd.thumbImageView.setImageBitmap(bitmap);
+//                                    }
+//                                });
+//                        break;
                 }
             }
 
@@ -136,6 +198,14 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
 
         // 加载数据
         loadSquare();
+    }
+
+    private void goneItemView(CommonViewHolder holder,
+                              boolean img, boolean audio, boolean video) {
+        holder.getView(R.id.tv_text).setVisibility(View.VISIBLE);
+        holder.getView(R.id.iv_img).setVisibility(img ? View.VISIBLE : View.GONE);
+        holder.getView(R.id.ll_music).setVisibility(audio ? View.VISIBLE : View.GONE);
+        holder.getView(R.id.ll_video).setVisibility(video ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -192,5 +262,11 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onRefresh() {
         loadSquare();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Jzvd.releaseAllVideos();
     }
 }
