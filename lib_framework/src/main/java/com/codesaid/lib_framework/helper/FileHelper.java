@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.CursorWindow;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -18,6 +19,7 @@ import com.codesaid.lib_framework.utils.log.LogUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 /**
@@ -137,5 +139,27 @@ public class FileHelper {
         int index = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(index);
+    }
+
+    /**
+     * 获取网络视频第一帧
+     *
+     * @param videoUrl
+     * @return
+     */
+    public Bitmap getNetVideoBitmap(String videoUrl) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            //根据url获取缩略图
+            retriever.setDataSource(videoUrl, new HashMap());
+            //获得第一帧图片
+            bitmap = retriever.getFrameAtTime();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } finally {
+            retriever.release();
+        }
+        return bitmap;
     }
 }

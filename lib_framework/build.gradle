@@ -11,7 +11,6 @@ android {
         targetSdkVersion this.rootProject.android.targetSdkVersion
         versionCode this.rootProject.android.versionCode
         versionName this.rootProject.android.versionName
-        multiDexEnabled this.rootProject.android.multiDexEnabled
 
         // Debug
         resConfigs("zh", "xxhdpi")
@@ -71,6 +70,10 @@ dependencies {
 
     // zxing
     api this.rootProject.depsLibs.zxing
+
+    // video
+    api this.rootProject.depsLibs.video
+
     // toast
     implementation this.rootProject.depsLibs.toast
     // Cloud

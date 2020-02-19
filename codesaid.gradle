@@ -7,7 +7,6 @@ ext {
             targetSdkVersion : 29,
             versionCode      : 1,
             versionName      : "1.0",
-            multiDexEnabled  : true
     ]
     depsVersion = [
             appcompat       : '1.1.0',
@@ -32,7 +31,8 @@ ext {
             map             : '5.0.0',
             location        : '3.3.0',
             search          : '5.0.0',
-            zxing           : '2.2'
+            zxing           : '2.2',
+            video           : '7.2.0'
     ]
 
 
@@ -60,6 +60,7 @@ ext {
             map             : "com.amap.api:3dmap:${depsVersion.map}",
             location        : "com.amap.api:location:${depsVersion.location}",
             search          : "com.amap.api:search:${depsVersion.search}",
-            zxing           : "cn.yipianfengye.android:zxing-library:${depsVersion.zxing}"
+            zxing           : "cn.yipianfengye.android:zxing-library:${depsVersion.zxing}",
+            video           : "cn.jzvd:jiaozivideoplayer:${depsVersion.video}"
     ]
 }

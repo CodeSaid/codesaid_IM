@@ -2,6 +2,7 @@ package com.im.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,7 +23,9 @@ import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.bmob.SquareSet;
+import com.codesaid.lib_framework.helper.FileHelper;
 import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
+import com.codesaid.lib_framework.view.VideoJzvdStd;
 import com.im.R;
 import com.im.ui.ImagePreviewActivity;
 import com.im.ui.PushSquareActivity;
@@ -36,6 +39,11 @@ import java.util.Locale;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.FindListener;
 import cn.jzvd.Jzvd;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created By codesaid
@@ -160,31 +168,31 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
                         });
                         break;
                     case SquareSet.PUSH_VIDEO:
-//                        goneItemView(holder, false, false, true);
-//                        holder.getView(R.id.tv_text).setVisibility(View.GONE);
-//
-//                        // 视频 播放
-//                        VideoJzvdStd videoJzvdStd = holder.getView(R.id.jz_video);
-//                        videoJzvdStd.setUp(model.getMediaUrl(), model.getText());
-//
-//                        Observable.create(new ObservableOnSubscribe<Bitmap>() {
-//                            @Override
-//                            public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
-//                                Bitmap mBitmap = FileHelper.getInstance()
-//                                        .getNetVideoBitmap(model.getMediaUrl());
-//                                if (mBitmap != null) {
-//                                    emitter.onNext(mBitmap);
-//                                    emitter.onComplete();
-//                                }
-//                            }
-//                        }).subscribeOn(Schedulers.newThread())
-//                                .observeOn(AndroidSchedulers.mainThread())
-//                                .subscribe(bitmap -> {
-//                                    if (bitmap != null) {
-//                                        videoJzvdStd.thumbImageView.setImageBitmap(bitmap);
-//                                    }
-//                                });
-//                        break;
+                        goneItemView(holder, false, false, true);
+                        holder.getView(R.id.tv_text).setVisibility(View.GONE);
+
+                        // 视频 播放
+                        VideoJzvdStd videoJzvdStd = holder.getView(R.id.jz_video);
+                        videoJzvdStd.setUp(model.getMediaUrl(), model.getText());
+
+                        Observable.create(new ObservableOnSubscribe<Bitmap>() {
+                            @Override
+                            public void subscribe(ObservableEmitter<Bitmap> emitter) throws Exception {
+                                Bitmap mBitmap = FileHelper.getInstance()
+                                        .getNetVideoBitmap(model.getMediaUrl());
+                                if (mBitmap != null) {
+                                    emitter.onNext(mBitmap);
+                                    emitter.onComplete();
+                                }
+                            }
+                        }).subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(bitmap -> {
+                                    if (bitmap != null) {
+                                        videoJzvdStd.thumbImageView.setImageBitmap(bitmap);
+                                    }
+                                });
+                        break;
                 }
             }
 

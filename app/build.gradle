@@ -24,7 +24,6 @@ android {
         targetSdkVersion this.rootProject.android.targetSdkVersion
         versionCode this.rootProject.android.versionCode
         versionName this.rootProject.android.versionName
-        multiDexEnabled this.rootProject.android.multiDexEnabled
 
         // Debug
         resConfigs("zh", "xxhdpi")
@@ -48,6 +47,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
