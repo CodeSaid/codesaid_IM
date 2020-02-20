@@ -1,15 +1,23 @@
 package com.im.fragment;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -25,7 +33,10 @@ import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.bmob.SquareSet;
 import com.codesaid.lib_framework.helper.FileHelper;
 import com.codesaid.lib_framework.mediaplayer.MediaPlayerManager;
+import com.codesaid.lib_framework.utils.anim.AnimUtils;
+import com.codesaid.lib_framework.utils.time.TimeUtils;
 import com.codesaid.lib_framework.view.VideoJzvdStd;
+import com.codesaid.lib_framework.window.WindowHelper;
 import com.im.R;
 import com.im.ui.ImagePreviewActivity;
 import com.im.ui.PushSquareActivity;
@@ -75,6 +86,42 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
     //音乐是否在播放
     private boolean isMusicPlay = false;
 
+    // 音乐悬浮窗 LayoutParams
+    private WindowManager.LayoutParams mLpMusicParams;
+    private View mMusicWindowView;
+
+    private ImageView iv_music_photo;
+    private ProgressBar pb_music_pos;
+    private TextView tv_music_cur;
+    private TextView tv_music_all;
+
+    //属性动画
+    private ObjectAnimator objAnimMusic;
+
+    //是否移动
+    private boolean isMove = false;
+    //是否拖拽
+    private boolean isDrag = false;
+    private int mLastX;
+    private int mLastY;
+
+    //更新进度
+    private static final int UPDATE_POS = 1235;
+
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case UPDATE_POS:
+                    int pos = msg.arg1;
+                    tv_music_cur.setText(TimeUtils.formatDuring(pos));
+                    pb_music_pos.setProgress(pos);
+                    break;
+            }
+            return false;
+        }
+    });
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_square, null);
@@ -85,10 +132,23 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
     private void initView(View view) {
         dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
         mMusicManager = new MediaPlayerManager();
+
+        initMusicWindow();
+
         mMusicManager.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 isMusicPlay = false;
+            }
+        });
+
+        mMusicManager.setOnProgressListener(new MediaPlayerManager.OnProgressListener() {
+            @Override
+            public void onProgress(int position, int pos) {
+                Message message = new Message();
+                message.what = UPDATE_POS;
+                message.arg1 = position;
+                mHandler.sendMessage(message);
             }
         });
 
@@ -155,7 +215,7 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
                             public void onClick(View view) {
                                 // 播放音乐
                                 if (mMusicManager.isPlaying()) { // 判断是否正在播放
-                                    mMusicManager.pausePlay();
+                                    hideMusicWindow();
                                 } else {
                                     if (isMusicPlay) {
                                         mMusicManager.continuePlay();
@@ -163,6 +223,7 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
                                         mMusicManager.startPlay(model.getMediaUrl());
                                         isMusicPlay = true;
                                     }
+                                    showMusicWindow();
                                 }
                             }
                         });
@@ -206,6 +267,97 @@ public class SquareFragment extends BaseFragment implements View.OnClickListener
 
         // 加载数据
         loadSquare();
+    }
+
+    /**
+     * 初始化 音乐 悬浮窗
+     */
+    private void initMusicWindow() {
+        mLpMusicParams = WindowHelper.getInstance().createLayoutParams(WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                Gravity.TOP | Gravity.LEFT);
+
+        mMusicWindowView = WindowHelper.getInstance().getView(R.layout.layout_square_music_item);
+
+        //初始化View
+        iv_music_photo = mMusicWindowView.findViewById(R.id.iv_music_photo);
+        pb_music_pos = mMusicWindowView.findViewById(R.id.pb_music_pos);
+        tv_music_cur = mMusicWindowView.findViewById(R.id.tv_music_cur);
+        tv_music_all = mMusicWindowView.findViewById(R.id.tv_music_all);
+
+        objAnimMusic = AnimUtils.rotation(iv_music_photo);
+
+        mMusicWindowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideMusicWindow();
+            }
+        });
+
+        mMusicWindowView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int mStartX = (int) event.getRawX();
+                int mStartY = (int) event.getRawY();
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        isMove = false;
+                        isDrag = false;
+                        mLastX = (int) event.getRawX();
+                        mLastY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+
+                        //偏移量
+                        int dx = mStartX - mLastX;
+                        int dy = mStartY - mLastY;
+
+                        if (isMove) {
+                            isDrag = true;
+                        } else {
+                            if (dx == 0 && dy == 0) {
+                                isMove = false;
+                            } else {
+                                isMove = true;
+                                isDrag = true;
+                            }
+                        }
+
+                        //移动
+                        mLpMusicParams.x += dx;
+                        mLpMusicParams.y += dy;
+
+                        //重置坐标
+                        mLastX = mStartX;
+                        mLastY = mStartY;
+
+                        //WindowManager addView removeView updateView
+                        WindowHelper.getInstance().updateView(mMusicWindowView, mLpMusicParams);
+
+                        break;
+                }
+                return isDrag;
+            }
+        });
+    }
+
+    /**
+     * 显示窗口
+     */
+    private void showMusicWindow() {
+        pb_music_pos.setMax(mMusicManager.getDuration());
+        tv_music_all.setText(TimeUtils.formatDuring(mMusicManager.getDuration()));
+        objAnimMusic.start();
+        WindowHelper.getInstance().showView(mMusicWindowView, mLpMusicParams);
+    }
+
+    /**
+     * 隐藏窗口
+     */
+    private void hideMusicWindow() {
+        mMusicManager.pausePlay();
+        objAnimMusic.pause();
+        WindowHelper.getInstance().hideView(mMusicWindowView);
     }
 
     private void goneItemView(CommonViewHolder holder,
