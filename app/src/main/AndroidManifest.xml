@@ -124,6 +124,10 @@
             android:name=".ui.PushSquareActivity"
             android:label="@string/text_square_psuh"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.MyInfoActivity"
+            android:label="@string/text_me_item_title_1"
+            android:launchMode="singleTask" />
 
         <service android:name=".service.CloudService" />
 

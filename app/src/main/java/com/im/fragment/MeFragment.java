@@ -11,12 +11,17 @@ import android.widget.TextView;
 import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
-import com.codesaid.lib_framework.bmob.PrivateSet;
+import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.helper.GlideHelper;
 import com.im.R;
+import com.im.ui.MyInfoActivity;
 import com.im.ui.NewFriendActivity;
 import com.im.ui.PrivateSettingActivity;
 import com.im.ui.ShareImageActivity;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -82,6 +87,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.ll_me_info: // 个人信息
+                startActivity(new Intent(getActivity(), MyInfoActivity.class));
+                break;
             case R.id.ll_new_friend:
                 //新朋友
                 startActivity(new Intent(getActivity(), NewFriendActivity.class));
@@ -91,6 +99,15 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.ll_private_set:
                 startActivity(new Intent(getActivity(), PrivateSettingActivity.class));
+                break;
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.EVENT_REFRE_ME_INFO:
+                loadMeInfo();
                 break;
         }
     }

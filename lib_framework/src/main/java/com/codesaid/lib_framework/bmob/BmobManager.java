@@ -11,6 +11,7 @@ import cn.bmob.v3.BmobSMS;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.FetchUserInfoListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.LogInListener;
 import cn.bmob.v3.listener.QueryListener;
@@ -59,6 +60,13 @@ public class BmobManager {
      */
     public IMUser getUser() {
         return BmobUser.getCurrentUser(IMUser.class);
+    }
+
+    /**
+     * 同步控制台信息至本地缓存
+     */
+    public void fetchUserInfo(FetchUserInfoListener<BmobUser> listener) {
+        BmobUser.fetchUserInfo(listener);
     }
 
     /**
