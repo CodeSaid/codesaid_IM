@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 
 import com.codesaid.lib_framework.base.BaseActivity;
 import com.codesaid.lib_framework.bmob.BmobManager;
+import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.helper.FileHelper;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.toast.ToastUtils;
@@ -161,7 +162,7 @@ public class FirstUploadActivity extends BaseActivity implements View.OnClickLis
             @Override
             public void onUploadSuccess() {
                 mLoadingView.hide();
-                setResult(RESULT_OK);
+                EventManager.post(EventManager.EVENT_REFRE_TOKEN_STATUS);
                 finish();
             }
 

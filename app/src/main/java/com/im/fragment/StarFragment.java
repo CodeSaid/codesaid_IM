@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.codesaid.lib_framework.cloud.CloudManager;
+import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.helper.PairFriendHelper;
 import com.codesaid.lib_framework.view.LoadingView;
 import com.im.adapter.CloudTagAdapter;
@@ -27,6 +30,9 @@ import com.im.ui.QrCodeActivity;
 import com.im.ui.UserInfoActivity;
 import com.moxun.tagcloudlib.view.TagCloudView;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +68,9 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
     private LoadingView mLoadingView;
     private List<IMUser> mAllUserList = new ArrayList<>();
 
+    //连接状态
+    private TextView tv_connect_status;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_star, null);
@@ -79,6 +88,8 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
         ll_soul = view.findViewById(R.id.ll_soul);
         ll_fate = view.findViewById(R.id.ll_fate);
         ll_love = view.findViewById(R.id.ll_love);
+
+        tv_connect_status = view.findViewById(R.id.tv_connect_status);
 
         mCloudView = view.findViewById(R.id.mCloudView);
 
@@ -164,6 +175,13 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
                             IMUser user = list.get(i);
                             saveStarUser(user.getObjectId(), user.getNickName(), user.getPhoto());
                         }
+
+                        //当请求数据已经加载出来的时候判断是否连接服务器
+                        if (CloudManager.getInstance().isConnect()) {
+                            //已经连接，并且星球加载，则隐藏
+                            tv_connect_status.setVisibility(View.GONE);
+                        }
+
                         mTagAdapter.notifyDataSetChanged();
                     }
                 }
@@ -300,5 +318,20 @@ public class StarFragment extends BaseFragment implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         PairFriendHelper.getInstance().disposable();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.EVENT_SERVER_CONNECT_STATUS:
+                if (event.isConnectStatus()) {
+                    if (mList != null && mList.size() > 0) {
+                        tv_connect_status.setVisibility(View.GONE);
+                    }
+                } else {
+                    tv_connect_status.setText(getString(R.string.text_star_pserver_fail));
+                }
+                break;
+        }
     }
 }

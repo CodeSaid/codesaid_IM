@@ -258,7 +258,11 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
             @Override
             public void onSuccess(List<Message> messages) {
                 if (messages != null && messages.size() > 0) {
-                    parseMessage(messages);
+                    try {
+                        parseMessage(messages);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     queryRemoteMessage();
                 }

@@ -25,6 +25,7 @@ import com.im.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -171,6 +172,8 @@ public class CallRecordFragment extends BaseFragment implements SwipeRefreshLayo
                             if (mList.size() > 0) {
                                 mList.clear();
                             }
+
+                            Collections.reverse(mList);
 
                             mList.addAll(callRecords);
                             mAdapter.notifyDataSetChanged();

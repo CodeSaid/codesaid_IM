@@ -18,6 +18,8 @@ import com.codesaid.lib_framework.base.BaseUIActivity;
 import com.codesaid.lib_framework.bean.TokenBean;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.entity.Constants;
+import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.net.HttpManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
@@ -30,6 +32,9 @@ import com.im.fragment.SquareFragment;
 import com.im.fragment.StarFragment;
 import com.im.service.CloudService;
 import com.im.ui.FirstUploadActivity;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.HashMap;
 import java.util.List;
@@ -455,6 +460,15 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
         super.onDestroy();
         if (mDisposable.isDisposed()) {
             mDisposable.dispose();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.EVENT_REFRE_TOKEN_STATUS:
+                checkToken();
+                break;
         }
     }
 }
