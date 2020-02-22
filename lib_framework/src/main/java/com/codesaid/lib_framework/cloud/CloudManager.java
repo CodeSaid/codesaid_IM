@@ -500,4 +500,14 @@ public class CloudManager {
         }
         RongCallClient.getInstance().setVoIPCallListener(listener);
     }
+
+    /**
+     * 是否连接
+     *
+     * @return
+     */
+    public boolean isConnect() {
+        return RongIMClient.getInstance().getCurrentConnectionStatus()
+                == RongIMClient.ConnectionStatusListener.ConnectionStatus.CONNECTED;
+    }
 }

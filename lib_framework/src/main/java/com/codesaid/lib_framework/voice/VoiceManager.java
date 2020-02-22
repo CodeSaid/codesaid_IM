@@ -5,6 +5,7 @@ import android.content.Context;
 import com.codesaid.lib_framework.utils.log.LogUtils;
 import com.iflytek.cloud.InitListener;
 import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.iflytek.cloud.ui.RecognizerDialog;
 import com.iflytek.cloud.ui.RecognizerDialogListener;
 
@@ -20,6 +21,9 @@ public class VoiceManager {
     private RecognizerDialog mIatDialog;
 
     private VoiceManager(Context context) {
+
+        SpeechUtility.createUtility(context, SpeechConstant.APPID + "=5e3407f5");
+
         mIatDialog = new RecognizerDialog(context, new InitListener() {
             @Override
             public void onInit(int i) {
@@ -45,11 +49,11 @@ public class VoiceManager {
         mIatDialog.setParameter(SpeechConstant.ASR_PTT, "1");
     }
 
-    public static VoiceManager getInstance(Context context) {
+    public static VoiceManager getInstance(Context mContext) {
         if (mInstance == null) {
             synchronized (VoiceManager.class) {
                 if (mInstance == null) {
-                    mInstance = new VoiceManager(context);
+                    mInstance = new VoiceManager(mContext);
                 }
             }
         }

@@ -14,6 +14,12 @@ android {
 
         // Debug
         resConfigs("zh", "xxhdpi")
+
+        sourceSets {
+            main{
+                jniLibs.srcDirs = ['libs']
+            }
+        }
     }
 
     buildTypes {
@@ -31,7 +37,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {

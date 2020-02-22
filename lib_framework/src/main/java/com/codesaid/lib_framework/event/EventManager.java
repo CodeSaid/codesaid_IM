@@ -27,6 +27,12 @@ public class EventManager {
     //刷新个人信息
     public static final int EVENT_REFRE_ME_INFO = 1006;
 
+    //融云服务器连接状态
+    public static final int EVENT_SERVER_CONNECT_STATUS = 1008;
+
+    //更新Token状态
+    public static final int EVENT_REFRE_TOKEN_STATUS = 1007;
+
     /**
      * 注册
      *

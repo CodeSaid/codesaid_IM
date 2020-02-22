@@ -27,6 +27,17 @@ public class MessageEvent {
     // 相机
     private SurfaceView surfaceView;
 
+    //服务器连接状态
+    private boolean connectStatus;
+
+    public boolean isConnectStatus() {
+        return connectStatus;
+    }
+
+    public void setConnectStatus(boolean connectStatus) {
+        this.connectStatus = connectStatus;
+    }
+
     public SurfaceView getSurfaceView() {
         return surfaceView;
     }
