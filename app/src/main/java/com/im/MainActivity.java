@@ -458,7 +458,8 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mDisposable.isDisposed()) {
+        if (!mDisposable.isDisposed()) { // 检查是否解绑
+            // 解绑
             mDisposable.dispose();
         }
     }

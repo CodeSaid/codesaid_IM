@@ -193,7 +193,7 @@ public class CallRecordFragment extends BaseFragment implements SwipeRefreshLayo
     public void onDestroy() {
         super.onDestroy();
         if (mDisposable != null) {
-            if (mDisposable.isDisposed()) {
+            if (!mDisposable.isDisposed()) {
                 mDisposable.dispose();
             }
         }

@@ -242,7 +242,7 @@ public class ContactFriendActivity extends BaseBackActivity implements SwipeRefr
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mDisposable.isDisposed()) {
+        if (!mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
     }

@@ -854,7 +854,7 @@ public class CloudService extends Service implements View.OnClickListener {
 
         EventManager.unregister(this);
 
-        if (mDisposable.isDisposed()) {
+        if (!mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
     }

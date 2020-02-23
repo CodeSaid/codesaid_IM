@@ -180,7 +180,7 @@ public class NewFriendActivity extends BaseBackActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mDisposable.isDisposed()) {
+        if (!mDisposable.isDisposed()) {
             mDisposable.dispose();
         }
     }
