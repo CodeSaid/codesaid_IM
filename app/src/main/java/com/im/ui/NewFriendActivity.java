@@ -48,6 +48,8 @@ public class NewFriendActivity extends BaseBackActivity {
     private List<NewFriend> mList = new ArrayList<>();
     private IMUser mUser;
 
+    private List<IMUser> mUserList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +77,7 @@ public class NewFriendActivity extends BaseBackActivity {
                     public void done(List<IMUser> list, BmobException e) {
                         if (e == null) {
                             mUser = list.get(0);
+                            mUserList.add(mUser);
                             holder.setImgUrl(NewFriendActivity.this, R.id.iv_photo,
                                     mUser.getPhoto());
                             holder.setImgResource(R.id.iv_sex, mUser.isSex() ?
@@ -103,7 +106,7 @@ public class NewFriendActivity extends BaseBackActivity {
                     @Override
                     public void onClick(View view) {
                         updateItem(position, 0);
-                        BmobManager.getInstance().addFriend(mUser, new SaveListener<String>() {
+                        BmobManager.getInstance().addFriend(mUserList.get(position), new SaveListener<String>() {
                             @Override
                             public void done(String s, BmobException e) {
                                 if (e == null) {

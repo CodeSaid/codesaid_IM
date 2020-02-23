@@ -136,23 +136,16 @@ public class LocationActivity extends BaseBackActivity implements View.OnClickLi
                         // 先隐藏 Dialog
                         DialogManager.getInstance().hide(mPoiView);
 
-                        MapManager.getInstance()
-                                .address2poi(model.toString())
-                                .setOnGeocodeListener(new MapManager.onGeocodeListener() {
-                                    @Override
-                                    public void poi2address(String address) {
+                        MapManager.getInstance().address2poi(model.toString(), new MapManager.onAddress2poiGeocodeListener() {
+                            @Override
+                            public void address2poi(double la, double lo, String address) {
+                                mLa = la;
+                                mLo = lo;
+                                mAddress = address;
 
-                                    }
-
-                                    @Override
-                                    public void address2poi(double la, double lo, String address) {
-                                        mLa = la;
-                                        mLo = lo;
-                                        mAddress = address;
-
-                                        updatePoi(mLa, mLo, mAddress);
-                                    }
-                                });
+                                updatePoi(mLa, mLo, mAddress);
+                            }
+                        });
                     }
                 });
             }
@@ -219,7 +212,7 @@ public class LocationActivity extends BaseBackActivity implements View.OnClickLi
      * @param address 地址
      */
     private void updatePoi(double la, double lo, String address) {
-        mAMap.setMyLocationEnabled(false);
+        mAMap.setMyLocationEnabled(true);
         supportInvalidateOptionsMenu();
         // 显示位置
         LatLng latLng = new LatLng(la, lo);

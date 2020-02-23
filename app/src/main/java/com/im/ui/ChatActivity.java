@@ -576,10 +576,22 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                 LogUtils.e("lo: " + lo);
                 LogUtils.e("address: " + address);
 
-                // 发送位置
-                CloudManager.getInstance().sendLocationMessage(la, lo, address, mYourId);
-                // 添加到 UI
-                addRightLocation(la, lo, address);
+                if (TextUtils.isEmpty(address)) {
+                    MapManager.getInstance().poi2address(la, lo, new MapManager.onPoi2addressGeocodeListener() {
+                        @Override
+                        public void poi2address(String address) {
+                            // 发送位置
+                            CloudManager.getInstance().sendLocationMessage(la, lo, address, mYourId);
+                            // 添加到 UI
+                            addRightLocation(la, lo, address);
+                        }
+                    });
+                } else {
+                    // 发送位置
+                    CloudManager.getInstance().sendLocationMessage(la, lo, address, mYourId);
+                    // 添加到 UI
+                    addRightLocation(la, lo, address);
+                }
             }
 
             if (uploadFile != null) {

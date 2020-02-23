@@ -22,11 +22,8 @@ public class MapManager {
     private static volatile MapManager mInstance = null;
     private GeocodeSearch mGeocodeSearch;
 
-    private onGeocodeListener mOnGeocodeListener;
-
-    public void setOnGeocodeListener(onGeocodeListener onGeocodeListener) {
-        mOnGeocodeListener = onGeocodeListener;
-    }
+    private onAddress2poiGeocodeListener address2poi;
+    private onPoi2addressGeocodeListener poi2address;
 
     private MapManager() {
 
@@ -53,8 +50,8 @@ public class MapManager {
         public void onRegeocodeSearched(RegeocodeResult regeocodeResult, int i) {
             if (i == AMapException.CODE_AMAP_SUCCESS) {
                 if (regeocodeResult != null) {
-                    if (mOnGeocodeListener != null) {
-                        mOnGeocodeListener.poi2address(regeocodeResult.getRegeocodeAddress()
+                    if (poi2address != null) {
+                        poi2address.poi2address(regeocodeResult.getRegeocodeAddress()
                                 .getFormatAddress());
                     }
                 }
@@ -65,11 +62,11 @@ public class MapManager {
         public void onGeocodeSearched(GeocodeResult geocodeResult, int i) {
             if (i == AMapException.CODE_AMAP_SUCCESS) {
                 if (geocodeResult != null) {
-                    if (mOnGeocodeListener != null) {
+                    if (address2poi != null) {
                         if (geocodeResult.getGeocodeAddressList() != null &&
                                 geocodeResult.getGeocodeAddressList().size() > 0) {
                             GeocodeAddress address = geocodeResult.getGeocodeAddressList().get(0);
-                            mOnGeocodeListener.address2poi(
+                            address2poi.address2poi(
                                     address.getLatLonPoint().getLatitude(),
                                     address.getLatLonPoint().getLongitude(),
                                     address.getFormatAddress()
@@ -86,7 +83,8 @@ public class MapManager {
      *
      * @param address 地址
      */
-    public MapManager address2poi(String address) {
+    public MapManager address2poi(String address, onAddress2poiGeocodeListener listener) {
+        this.address2poi = listener;
         GeocodeQuery query = new GeocodeQuery(address, "");
         mGeocodeSearch.getFromLocationNameAsyn(query);
         return mInstance;
@@ -98,7 +96,9 @@ public class MapManager {
      * @param la 经度
      * @param lo 纬度
      */
-    public MapManager poi2address(double la, double lo) {
+    public MapManager poi2address(double la, double lo, onPoi2addressGeocodeListener listener) {
+        this.poi2address = listener;
+
         /**
          * 第二个参数： 时间
          * 第三个参数： 需要转换的坐标系类型
@@ -109,9 +109,11 @@ public class MapManager {
         return mInstance;
     }
 
-    public interface onGeocodeListener {
+    public interface onPoi2addressGeocodeListener {
         void poi2address(String address);
+    }
 
+    public interface onAddress2poiGeocodeListener {
         void address2poi(double la, double lo, String address);
     }
 
