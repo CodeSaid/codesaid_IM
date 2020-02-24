@@ -5,6 +5,7 @@ import android.content.Context;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.map.MapManager;
+import com.codesaid.lib_framework.notification.NotificationHelper;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.codesaid.lib_framework.window.WindowHelper;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
@@ -44,5 +45,6 @@ public class Framework {
         //VoiceManager.getInstance().initVoice(context);
         WindowHelper.getInstance().initWindow(context);
         ZXingLibrary.initDisplayOpinion(context);
+        NotificationHelper.getInstance().createChannel(context);
     }
 }
