@@ -11,7 +11,9 @@ import android.provider.Settings;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.event.MessageEvent;
+import com.codesaid.lib_framework.utils.LanguaueUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -179,6 +181,11 @@ public class BaseActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(MessageEvent event) {
-
+        switch (event.getType()) {
+            case EventManager.EVENT_RUPDATE_LANGUAUE:
+                LanguaueUtils.updateLanguaue(this);
+                recreate();
+                break;
+        }
     }
 }

@@ -16,6 +16,9 @@ public class Constants {
     // 手机号码
     public static final String SP_PHONE = "phone";
 
+    //多语言
+    public static final String SP_LANGUAUE = "languaue";
+
     //Intent 传递
     public static final String INTENT_USER_ID = "intent_user_id";
     public static final String INTENT_USER_PHOTO = "intent_user_photo";

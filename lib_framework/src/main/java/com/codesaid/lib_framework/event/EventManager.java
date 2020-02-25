@@ -24,6 +24,9 @@ public class EventManager {
     // 发送相机数据
     public static final int FLAG_SEND_CAMERA = 1004;
 
+    //更新语言
+    public static final int EVENT_RUPDATE_LANGUAUE = 1005;
+
     //刷新个人信息
     public static final int EVENT_REFRE_ME_INFO = 1006;
 
