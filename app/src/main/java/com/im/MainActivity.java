@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -471,5 +472,26 @@ public class MainActivity extends BaseUIActivity implements View.OnClickListener
                 checkToken();
                 break;
         }
+    }
+
+    //第一次按下时间
+    private long firstClick;
+
+    @Override
+    public void onBackPressed() {
+        AppExit();
+        //super.onBackPressed();
+    }
+
+    /**
+     * 再按一次退出
+     */
+    public void AppExit() {
+        if (System.currentTimeMillis() - this.firstClick > 2000L) {
+            this.firstClick = System.currentTimeMillis();
+            Toast.makeText(this, getString(R.string.text_main_exit), Toast.LENGTH_LONG).show();
+            return;
+        }
+        finish();
     }
 }
