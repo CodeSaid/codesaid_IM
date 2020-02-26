@@ -48,7 +48,7 @@ public class ChatThemeActivity extends BaseBackActivity {
         mThemeList.add(R.drawable.img_chat_bg_8);
         mThemeList.add(R.drawable.img_chat_bg_9);
 
-        mThemeView = (RecyclerView) findViewById(R.id.mThemeView);
+        mThemeView = findViewById(R.id.mThemeView);
         mThemeView.setLayoutManager(new GridLayoutManager(this, 3));
         mThemeAdapter = new CommonAdapter<>(mThemeList, new CommonAdapter.onBindDataListener<Integer>() {
             @Override

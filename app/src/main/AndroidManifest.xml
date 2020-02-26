@@ -128,6 +128,10 @@
             android:name=".ui.MyInfoActivity"
             android:label="@string/text_me_item_title_1"
             android:launchMode="singleTask" />
+        <activity
+            android:name=".ui.ChatThemeActivity"
+            android:label="主题"
+            android:launchMode="singleTask" />
 
         <service android:name=".service.CloudService" />
 
