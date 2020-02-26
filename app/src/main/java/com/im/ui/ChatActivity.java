@@ -28,6 +28,7 @@ import com.codesaid.lib_framework.event.MessageEvent;
 import com.codesaid.lib_framework.helper.FileHelper;
 import com.codesaid.lib_framework.map.MapManager;
 import com.codesaid.lib_framework.utils.log.LogUtils;
+import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.codesaid.lib_framework.voice.VoiceManager;
 import com.google.gson.Gson;
 import com.iflytek.cloud.RecognizerResult;
@@ -68,6 +69,9 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
     public static final int TYPE_RIGHT_LOCATION = 5;
 
     public static final int LOCATION_REQUEST_CODE = 1999;
+
+    //背景主题
+    private LinearLayout ll_chat_bg;
 
     // 对方 id
     private String mYourId;
@@ -129,6 +133,8 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
         et_input_msg = findViewById(R.id.et_input_msg);
         btn_send_msg = findViewById(R.id.btn_send_msg);
 
+        ll_chat_bg = (LinearLayout) findViewById(R.id.ll_chat_bg);
+
         ll_voice = findViewById(R.id.ll_voice);
         ll_camera = findViewById(R.id.ll_camera);
         ll_pic = findViewById(R.id.ll_pic);
@@ -139,6 +145,8 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
         ll_camera.setOnClickListener(this);
         ll_pic.setOnClickListener(this);
         ll_location.setOnClickListener(this);
+
+        updateChatTheme();
 
         mChatView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -338,6 +346,44 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
                     addRightLocation(locationMessage.getLat(), locationMessage.getLng(), locationMessage.getPoi());
                 }
             }
+        }
+    }
+
+    /**
+     * 更新主题
+     */
+    private void updateChatTheme() {
+        //主题的选择 0:无主题
+        int chat_theme = SpUtils.getInstance().getInt(Constants.SP_CHAT_THEME, 0);
+        switch (chat_theme) {
+            case 1:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_1);
+                break;
+            case 2:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_2);
+                break;
+            case 3:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_3);
+                break;
+            case 4:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_4);
+                break;
+            case 5:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_5);
+                break;
+            case 6:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_6);
+                break;
+            case 7:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_7);
+                break;
+            case 8:
+                ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_8);
+                break;
+            case 9:
+                //9的话是默认，可以不设置图片，直接就是纯白
+                //ll_chat_bg.setBackgroundResource(R.drawable.img_chat_bg_9);
+                break;
         }
     }
 

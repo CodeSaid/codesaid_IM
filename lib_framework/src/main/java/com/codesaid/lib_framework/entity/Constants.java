@@ -19,6 +19,9 @@ public class Constants {
     //多语言
     public static final String SP_LANGUAUE = "languaue";
 
+    //主题
+    public static final String SP_CHAT_THEME = "chat_theme";
+
     //Intent 传递
     public static final String INTENT_USER_ID = "intent_user_id";
     public static final String INTENT_USER_PHOTO = "intent_user_photo";
