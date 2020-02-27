@@ -17,6 +17,7 @@ import com.codesaid.lib_framework.helper.GlideHelper;
 import com.im.R;
 import com.im.ui.MyInfoActivity;
 import com.im.ui.NewFriendActivity;
+import com.im.ui.NoticeActivity;
 import com.im.ui.PrivateSettingActivity;
 import com.im.ui.ShareImageActivity;
 
@@ -100,6 +101,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             case R.id.ll_private_set: // 隐私设置
                 startActivity(new Intent(getActivity(), PrivateSettingActivity.class));
                 break;
+            case R.id.ll_notice:
+                //通知
+                startActivity(new Intent(getActivity(), NoticeActivity.class));
         }
     }
 

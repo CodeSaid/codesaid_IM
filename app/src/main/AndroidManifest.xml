@@ -133,6 +133,11 @@
             android:label="主题"
             android:launchMode="singleTask" />
 
+        <!--通知-->
+        <activity
+            android:name=".ui.NoticeActivity"
+            android:launchMode="singleTask" />
+
         <service android:name=".service.CloudService" />
 
         <!--   FileProvider     -->
