@@ -97,7 +97,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             case R.id.ll_share: // 分享
                 startActivity(new Intent(getActivity(), ShareImageActivity.class));
                 break;
-            case R.id.ll_private_set:
+            case R.id.ll_private_set: // 隐私设置
                 startActivity(new Intent(getActivity(), PrivateSettingActivity.class));
                 break;
         }
