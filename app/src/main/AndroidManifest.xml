@@ -138,6 +138,11 @@
             android:name=".ui.NoticeActivity"
             android:launchMode="singleTask" />
 
+        <!--设置-->
+        <activity
+            android:name=".ui.SettingActivity"
+            android:launchMode="singleTask" />
+
         <service android:name=".service.CloudService" />
 
         <!--   FileProvider     -->

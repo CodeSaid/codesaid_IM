@@ -19,6 +19,7 @@ import com.im.ui.MyInfoActivity;
 import com.im.ui.NewFriendActivity;
 import com.im.ui.NoticeActivity;
 import com.im.ui.PrivateSettingActivity;
+import com.im.ui.SettingActivity;
 import com.im.ui.ShareImageActivity;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -104,6 +105,10 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             case R.id.ll_notice:
                 //通知
                 startActivity(new Intent(getActivity(), NoticeActivity.class));
+            case R.id.ll_setting:
+                //设置
+                startActivity(new Intent(getActivity(), SettingActivity.class));
+                break;
         }
     }
 
