@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.codesaid.lib_framework.event.EventManager;
 import com.codesaid.lib_framework.event.MessageEvent;
+import com.codesaid.lib_framework.helper.ActivityHelper;
 import com.codesaid.lib_framework.utils.LanguaueUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -170,6 +171,10 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ActivityHelper.getInstance().addActivity(this);
+        LanguaueUtils.updateLanguaue(this);
+
         EventBus.getDefault().register(this);
     }
 
