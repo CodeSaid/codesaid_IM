@@ -2,6 +2,8 @@ package com.codesaid.lib_framework.bmob;
 
 import android.content.Context;
 
+import com.codesaid.lib_framework.utils.log.LogUtils;
+
 import java.io.File;
 import java.util.List;
 
@@ -321,5 +323,28 @@ public class BmobManager {
         void onUploadSuccess();
 
         void onUploadFail(BmobException e);
+    }
+
+    public void addUpdateSet() {
+        UpdateSet updateSet = new UpdateSet();
+        updateSet.setVersionCode(2);
+        updateSet.setPath("---");
+        updateSet.setDesc("---");
+        updateSet.save(new SaveListener<String>() {
+            @Override
+            public void done(String s, BmobException e) {
+                LogUtils.i("s:" + s + "e:" + e.toString());
+            }
+        });
+    }
+
+    /**
+     * 查询更新
+     *
+     * @param listener listener
+     */
+    public void queryUpdateSet(FindListener<UpdateSet> listener) {
+        BmobQuery<UpdateSet> bmobQuery = new BmobQuery<>();
+        bmobQuery.findObjects(listener);
     }
 }
