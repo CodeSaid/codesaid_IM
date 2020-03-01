@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -69,6 +71,8 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
     public static final int TYPE_RIGHT_LOCATION = 5;
 
     public static final int LOCATION_REQUEST_CODE = 1999;
+
+    private static final int CHAT_INFO_REQUEST_CODE = 1889;
 
     //背景主题
     private LinearLayout ll_chat_bg;
@@ -649,5 +653,35 @@ public class ChatActivity extends BaseBackActivity implements View.OnClickListen
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_chat_menu:
+                ChatInfoActivity.startChatInfo(this, mYourId, CHAT_INFO_REQUEST_CODE);
+                break;
+            case R.id.menu_chat_audio:
+                if (!checkWindowPermission()) {
+                    requestWindowPermission();
+                } else {
+                    CloudManager.getInstance().startAudioCall(this, mYourId);
+                }
+                break;
+            case R.id.menu_chat_video:
+                if (!checkWindowPermission()) {
+                    requestWindowPermission();
+                } else {
+                    CloudManager.getInstance().startVideoCall(this, mYourId);
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

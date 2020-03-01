@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.codesaid.lib_framework.base.BaseBackActivity;
 import com.codesaid.lib_framework.cloud.CloudManager;
 import com.codesaid.lib_framework.entity.Constants;
+import com.codesaid.lib_framework.helper.ActivityHelper;
+import com.codesaid.lib_framework.helper.UpdateHelper;
 import com.codesaid.lib_framework.utils.LanguaueUtils;
 import com.codesaid.lib_framework.utils.sp.SpUtils;
 import com.codesaid.lib_framework.view.DialogManager;
@@ -31,9 +33,9 @@ import cn.bmob.v3.BmobUser;
  * Created By codesaid
  * On :2020-02-28 20:43
  * Package Name: com.im.ui
- * desc:
+ * desc: 设置
  */
-public class SettingActivity extends BaseBackActivity {
+public class SettingActivity extends BaseBackActivity implements View.OnClickListener {
 
     private Switch sw_app_tips;
     private RelativeLayout rl_app_tips;
@@ -68,27 +70,27 @@ public class SettingActivity extends BaseBackActivity {
 
     private void initView() {
 
-        sw_app_tips = (Switch) findViewById(R.id.sw_app_tips);
-        rl_app_tips = (RelativeLayout) findViewById(R.id.rl_app_tips);
+        sw_app_tips = findViewById(R.id.sw_app_tips);
+        rl_app_tips = findViewById(R.id.rl_app_tips);
 
-        tv_cache_size = (TextView) findViewById(R.id.tv_cache_size);
-        rl_clear_cache = (RelativeLayout) findViewById(R.id.rl_clear_cache);
+        tv_cache_size = findViewById(R.id.tv_cache_size);
+        rl_clear_cache = findViewById(R.id.rl_clear_cache);
 
-        tv_current_languaue = (TextView) findViewById(R.id.tv_current_languaue);
-        rl_update_languaue = (RelativeLayout) findViewById(R.id.rl_update_languaue);
+        tv_current_languaue = findViewById(R.id.tv_current_languaue);
+        rl_update_languaue = findViewById(R.id.rl_update_languaue);
 
-        rl_check_permissions = (RelativeLayout) findViewById(R.id.rl_check_permissions);
+        rl_check_permissions = findViewById(R.id.rl_check_permissions);
         tv_new_version = findViewById(R.id.tv_new_version);
 
-        rl_app_show = (RelativeLayout) findViewById(R.id.rl_app_show);
+        rl_app_show = findViewById(R.id.rl_app_show);
         rl_app_show.setOnClickListener(this);
 
-        tv_app_version = (TextView) findViewById(R.id.tv_app_version);
+        tv_app_version = findViewById(R.id.tv_app_version);
         rl_check_version = findViewById(R.id.rl_check_version);
 
         rl_chat_theme = findViewById(R.id.rl_chat_theme);
 
-        btn_logout = (Button) findViewById(R.id.btn_logout);
+        btn_logout = findViewById(R.id.btn_logout);
 
         btn_logout.setOnClickListener(this);
         rl_clear_cache.setOnClickListener(this);
@@ -109,9 +111,9 @@ public class SettingActivity extends BaseBackActivity {
 
         tv_cache_size.setText("0.0 MB");
 
-        int languaue = SpUtils.getInstance().getInt(Constants.SP_LANGUAUE, 0);
-        tv_current_languaue.setText(languaue == 1 ? getString(R.string.text_setting_en) : getString(R.string.text_setting_zh));
-        initLanguaueDialog();
+        int language = SpUtils.getInstance().getInt(Constants.SP_LANGUAUE, 0);
+        tv_current_languaue.setText(language == 1 ? getString(R.string.text_setting_en) : getString(R.string.text_setting_zh));
+        initLanguageDialog();
 
         mUpdateHelper = new UpdateHelper(this);
         updateApp();
@@ -121,11 +123,11 @@ public class SettingActivity extends BaseBackActivity {
         mUpdateHelper.updateApp(isUpdate -> tv_new_version.setVisibility(isUpdate ? View.VISIBLE : View.GONE));
     }
 
-    private void initLanguaueDialog() {
+    private void initLanguageDialog() {
         mLanguaueDialog = DialogManager.getInstance().initView(this, R.layout.dialog_select_photo, Gravity.BOTTOM);
-        tv_zh = (TextView) mLanguaueDialog.findViewById(R.id.tv_camera);
-        tv_en = (TextView) mLanguaueDialog.findViewById(R.id.tv_ablum);
-        tv_cancel = (TextView) mLanguaueDialog.findViewById(R.id.tv_cancel);
+        tv_zh = mLanguaueDialog.findViewById(R.id.tv_camera);
+        tv_en = mLanguaueDialog.findViewById(R.id.tv_ablum);
+        tv_cancel = mLanguaueDialog.findViewById(R.id.tv_cancel);
 
         tv_zh.setText(getString(R.string.text_setting_zh));
         tv_en.setText(getString(R.string.text_setting_en));

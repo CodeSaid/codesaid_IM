@@ -18,9 +18,14 @@ import com.codesaid.lib_framework.base.BaseFragment;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.Friend;
 import com.codesaid.lib_framework.bmob.IMUser;
+import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.im.R;
 import com.im.model.AllFriendModel;
 import com.im.ui.UserInfoActivity;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,6 +151,17 @@ public class AllFriendFragment extends BaseFragment implements SwipeRefreshLayou
     public void onRefresh() {
         if (mAllFriendRefreshLayout.isRefreshing()) {
             queryMyFriends();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.FLAG_UPDATE_FRIEND:
+                if (!mAllFriendRefreshLayout.isRefreshing()) {
+                    queryMyFriends();
+                }
+                break;
         }
     }
 }

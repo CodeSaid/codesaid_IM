@@ -19,10 +19,15 @@ import com.codesaid.lib_framework.bean.TextBean;
 import com.codesaid.lib_framework.bmob.BmobManager;
 import com.codesaid.lib_framework.bmob.IMUser;
 import com.codesaid.lib_framework.cloud.CloudManager;
+import com.codesaid.lib_framework.event.EventManager;
+import com.codesaid.lib_framework.event.MessageEvent;
 import com.google.gson.Gson;
 import com.im.R;
 import com.im.model.ChatRecordModel;
 import com.im.ui.ChatActivity;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -202,5 +207,16 @@ public class ChatRecordFragment extends BaseFragment implements SwipeRefreshLayo
         // 查询聊天记录
         queryChatRecord();
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(MessageEvent event) {
+        switch (event.getType()) {
+            case EventManager.FLAG_UPDATE_FRIEND:
+                if (mChatRecordRefreshLayout.isRefreshing()) {
+                    queryChatRecord();
+                }
+                break;
+        }
     }
 }
