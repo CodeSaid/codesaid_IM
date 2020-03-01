@@ -260,6 +260,35 @@ public class BmobManager {
     }
 
     /**
+     * 删除好友
+     *
+     * @param id       要删除的 用户 id
+     * @param listener listener
+     */
+    public void deleteFriend(final String id, final UpdateListener listener) {
+        /**
+         * 从自己的好友列表中删除
+         * 如果需要，也可以从对方好友中删除
+         */
+        queryFriends(new FindListener<Friend>() {
+            @Override
+            public void done(List<Friend> list, BmobException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        for (int i = 0; i < list.size(); i++) {
+                            if (list.get(i).getFriendUser().getObjectId().equals(id)) {
+                                Friend friend = new Friend();
+                                friend.setObjectId(list.get(i).getObjectId());
+                                friend.delete(listener);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * 添加 私有库
      *
      * @param listener listener
