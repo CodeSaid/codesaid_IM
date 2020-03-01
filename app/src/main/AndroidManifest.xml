@@ -142,6 +142,10 @@
         <activity
             android:name=".ui.SettingActivity"
             android:launchMode="singleTask" />
+        <!--聊天信息-->
+        <activity
+            android:name=".ui.ChatInfoActivity"
+            android:launchMode="singleTask" />
 
         <service android:name=".service.CloudService" />
 
