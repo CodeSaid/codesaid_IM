@@ -130,7 +130,7 @@
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.ChatThemeActivity"
-            android:label="主题"
+            android:label="@string/theme"
             android:launchMode="singleTask" />
 
         <!--通知-->
@@ -141,6 +141,7 @@
         <!--设置-->
         <activity
             android:name=".ui.SettingActivity"
+            android:label="@string/text_me_item_title_6"
             android:launchMode="singleTask" />
         <!--聊天信息-->
         <activity

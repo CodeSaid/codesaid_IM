@@ -105,6 +105,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
             case R.id.ll_notice:
                 //通知
                 startActivity(new Intent(getActivity(), NoticeActivity.class));
+                break;
             case R.id.ll_setting:
                 //设置
                 startActivity(new Intent(getActivity(), SettingActivity.class));

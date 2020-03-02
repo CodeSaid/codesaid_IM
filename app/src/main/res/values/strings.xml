@@ -113,6 +113,7 @@
     <string name="text_me_item_title_4">隐私设置</string>
     <string name="text_me_item_title_5">分享</string>
     <string name="text_me_item_title_6">设置</string>
+    <string name="theme">主题</string>
 
     <string name="text_main_star_1">随机</string>
     <string name="text_main_star_2">灵魂</string>
