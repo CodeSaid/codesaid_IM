@@ -263,7 +263,7 @@ public class UserInfoActivity extends BaseUIActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.iv_user_photo:
-
+                ImagePreviewActivity.startActivity(this, true, mUser.getPhoto());
                 break;
             case R.id.btn_add_friend:
                 DialogManager.getInstance().show(mAddFriendDialog);
