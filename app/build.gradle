@@ -9,12 +9,12 @@ apply plugin: 'com.android.application'
 
 android {
     // Debug 模式
-    if (rootProject.hasProperty("devBuild")) {
-        splits.abi.enable = false
-        splits.density.enable = false
-        // 禁用 PNG 压缩
-        aaptOptions.cruncherEnabled = false
-    }
+//    if (rootProject.hasProperty("devBuild")) {
+//        splits.abi.enable = false
+//        splits.density.enable = false
+//        // 禁用 PNG 压缩
+//        aaptOptions.cruncherEnabled = false
+//    }
     compileSdkVersion this.rootProject.android.compileSdkVersion
     buildToolsVersion this.rootProject.android.buildToolsVersion
 
@@ -26,7 +26,7 @@ android {
         versionName this.rootProject.android.versionName
 
         // Debug
-        resConfigs("zh", "xxhdpi")
+        //resConfigs("zh", "xxhdpi")
 
         ndk {
 
@@ -41,10 +41,16 @@ android {
             buildConfigField("String", "SP_NAME", "\"Config\"")
         }
         release {
+            // 清理无用资源
+            //shrinkResources true
+            // 启用 zip 压缩
+            zipAlignEnabled true
+            // 是否混淆
+            minifyEnabled false
+
             buildConfigField("boolean", "LOG_DEBUG", "false")
             buildConfigField("String", "LOG_TAG", "\"CodeSaid\"")
             buildConfigField("String", "SP_NAME", "\"Config\"")
-            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
