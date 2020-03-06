@@ -42,11 +42,11 @@ android {
         }
         release {
             // 清理无用资源
-            //shrinkResources true
+            shrinkResources true
             // 启用 zip 压缩
             zipAlignEnabled true
             // 是否混淆
-            minifyEnabled false
+            minifyEnabled true
 
             buildConfigField("boolean", "LOG_DEBUG", "false")
             buildConfigField("String", "LOG_TAG", "\"CodeSaid\"")
